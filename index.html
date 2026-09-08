@@ -5262,7 +5262,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
   var currentSectionIds = [];
 
   function rebuildScrollSpy() {
-    var sel = body.classList.contains('page-aesthetic') ? '#sidebarAesNav a' : '#sidebarNav a';
+    var sel = document.body.classList.contains('page-aesthetic') ? '#sidebarAesNav a' : '#sidebarNav a';
     currentNavLinks = document.querySelectorAll(sel);
     currentSectionIds = [];
     currentNavLinks.forEach(function(link) {
@@ -5300,7 +5300,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
   updateActiveNav();
 
   // ============== Sidebar nav click smooth scroll ==============
-  navLinks.forEach(function(link) {
+  document.querySelectorAll('#sidebarNav a, #sidebarAesNav a').forEach(function(link) {
     link.addEventListener('click', function(e) {
       var href = link.getAttribute('href');
       if (href && href.indexOf('#') === 0) {
