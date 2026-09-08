@@ -6,21 +6,25 @@
 <title>2026 AI视听制作工具全景报告 v2.0 — 更新版</title>
 <style>
 :root {
-  --bg: #0d1117;
-  --bg-card: #161b22;
-  --bg-hover: #1c2128;
-  --border: #30363d;
-  --text: #e6edf3;
-  --text-dim: #8b949e;
-  --text-muted: #6e7681;
-  --accent: #58a6ff;
-  --accent-purple: #bc8cff;
-  --accent-green: #3fb950;
-  --accent-red: #f85149;
-  --accent-yellow: #d29922;
-  --accent-orange: #db6d28;
-  --accent-teal: #39d0d8;
-  --accent-pink: #f778ba;
+  /* 深灰主基调 + 一点点亮色 */
+  --bg: #1D2426;
+  --bg-card: #252C2F;
+  --bg-hover: #2F373A;
+  --bg-elev: #2A3236;
+  --border: #3A4347;
+  --border-strong: #5A6D67;
+  --text: #C0C9C5;
+  --text-dim: #8A9694;
+  --text-muted: #6B7672;
+  /* 点缀：仅作为高亮 / 链接 / 关键按钮使用 */
+  --accent: #A5E7CA;
+  --accent-purple: #A5E7CA;
+  --accent-green: #A5E7CA;
+  --accent-red: #EC7318;
+  --accent-yellow: #EC7318;
+  --accent-orange: #EC7318;
+  --accent-teal: #A5E7CA;
+  --accent-pink: #EC7318;
   --radius: 12px;
   --radius-sm: 8px;
 }
@@ -33,51 +37,51 @@ body {
 
 /* Hero */
 .hero {
-  background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a0b2e 100%);
+  background: linear-gradient(135deg, #1D2426 0%, #252C2F 50%, #1D2426 100%);
   padding: 80px 24px 60px; text-align: center; border-bottom: 1px solid var(--border);
   position: relative; overflow: hidden;
 }
 .hero::before {
   content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(ellipse at center, rgba(88,166,255,0.06) 0%, transparent 60%);
+  background: radial-gradient(ellipse at center, rgba(165,231,202,0.05) 0%, transparent 60%);
   animation: pulse 8s ease-in-out infinite;
 }
 @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
 .hero h1 {
   font-size: 2.8rem; font-weight: 800; position: relative; letter-spacing: -1px; margin-bottom: 16px;
-  background: linear-gradient(135deg, #58a6ff, #bc8cff, #f778ba);
+  background: linear-gradient(135deg, #C0C9C5, #A5E7CA);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .hero .subtitle { font-size: 1.15rem; color: var(--text-dim); max-width: 700px; margin: 0 auto 24px; position: relative; }
 .hero .meta { display: inline-flex; gap: 16px; flex-wrap: wrap; justify-content: center; position: relative; }
 .hero .meta span {
-  background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.3); color: var(--accent);
+  background: rgba(90,109,103,0.18); border: 1px solid rgba(90,109,103,0.45); color: var(--text);
   padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;
 }
 .hero .toolset-link {
   display: inline-flex; align-items: center; gap: 8px;
-  background: linear-gradient(135deg, rgba(88,166,255,0.18), rgba(188,140,255,0.18));
-  border: 1px solid rgba(188,140,255,0.45);
-  color: #e6edf3; padding: 8px 20px; border-radius: 22px;
+  background: linear-gradient(135deg, rgba(165,231,202,0.10), rgba(90,109,103,0.18));
+  border: 1px solid rgba(165,231,202,0.45);
+  color: #C0C9C5; padding: 8px 20px; border-radius: 22px;
   font-size: 0.92rem; font-weight: 600; text-decoration: none;
   margin: 0 8px 14px; position: relative;
   transition: all 0.25s ease;
-  box-shadow: 0 2px 12px rgba(188,140,255,0.18);
+  box-shadow: 0 2px 12px rgba(165,231,202,0.10);
 }
 .hero .toolset-link:hover {
-  background: linear-gradient(135deg, rgba(88,166,255,0.35), rgba(188,140,255,0.35));
-  border-color: rgba(188,140,255,0.8);
+  background: linear-gradient(135deg, rgba(165,231,202,0.22), rgba(90,109,103,0.22));
+  border-color: rgba(165,231,202,0.8);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(188,140,255,0.35);
+  box-shadow: 0 6px 20px rgba(165,231,202,0.25);
 }
 .hero .toolset-link .ts-label {
-  background: linear-gradient(135deg, #f778ba, #bc8cff);
+  background: linear-gradient(135deg, #A5E7CA, #EC7318);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   font-weight: 700;
 }
 .hero .toolset-link .ts-arrow { opacity: 0.7; font-size: 0.85rem; }
 .hero .update-badge {
-  display: inline-block; background: linear-gradient(135deg, #f85149, #db6d28);
+  display: inline-block; background: linear-gradient(135deg, #EC7318, #A5E7CA);
   color: #fff; padding: 8px 24px; border-radius: 20px; font-size: 0.9rem; font-weight: 700;
   margin-bottom: 20px; position: relative; box-shadow: 0 4px 20px rgba(248,81,73,0.3);
 }
@@ -85,7 +89,7 @@ body {
 /* ===== Landing Page: 两个大入口卡片 ===== */
 #landing-page {
   min-height: calc(100vh - 0px);
-  background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a0b2e 100%);
+  background: linear-gradient(135deg, #1D2426 0%, #252C2F 50%, #1D2426 100%);
   position: relative; overflow: hidden;
 }
 #landing-page::before {
@@ -101,13 +105,13 @@ body {
   text-align: center; margin-bottom: 56px;
 }
 .landing-hero .badge {
-  display: inline-block; background: linear-gradient(135deg, #f85149, #db6d28);
+  display: inline-block; background: linear-gradient(135deg, #EC7318, #A5E7CA);
   color: #fff; padding: 6px 18px; border-radius: 16px; font-size: 0.78rem; font-weight: 700;
   margin-bottom: 18px; box-shadow: 0 4px 20px rgba(248,81,73,0.3);
 }
 .landing-hero h1 {
   font-size: 3rem; font-weight: 800; margin: 0 0 14px; line-height: 1.1;
-  background: linear-gradient(135deg, #58a6ff, #a371f7, #f772b3);
+  background: linear-gradient(135deg, #A5E7CA, #EC7318);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .landing-hero .sub { color: var(--text-dim); font-size: 1.05rem; max-width: 700px; margin: 0 auto; }
@@ -128,7 +132,7 @@ body {
 }
 
 .landing-card {
-  background: linear-gradient(155deg, rgba(22,27,34,0.95), rgba(13,17,23,0.9));
+  background: linear-gradient(155deg, rgba(37,44,47,0.95), rgba(29,36,38,0.9));
   border: 1px solid var(--border); border-radius: 18px; padding: 32px 28px;
   position: relative; overflow: hidden; cursor: pointer;
   transition: transform 0.35s cubic-bezier(.2,.8,.2,1), border-color 0.35s, box-shadow 0.35s;
@@ -191,20 +195,24 @@ body {
 .landing-card .enter-btn .arrow { font-size: 1.1rem; transition: transform 0.3s; }
 .landing-card:hover .enter-btn .arrow { transform: translateX(4px); }
 
-/* 返回首页按钮（子页面里用） */
+/* 返回首页按钮（子页面里用）—— 始终让出侧栏顶部，绝不遮挡可点击元素 */
 .back-to-home {
-  position: fixed; top: 20px; left: 20px; z-index: 200;
+  position: fixed; top: 16px; left: 80px; z-index: 199;
   display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(22,27,34,0.95); border: 1px solid var(--border);
-  color: var(--text-dim); padding: 8px 14px; border-radius: 20px;
+  background: rgba(37,44,47,0.95); border: 1px solid var(--border-strong);
+  color: var(--text); padding: 8px 14px; border-radius: 20px;
   font-size: 0.8rem; cursor: pointer; text-decoration: none;
   backdrop-filter: blur(8px); transition: all 0.2s;
 }
 .back-to-home:hover { color: var(--accent); border-color: var(--accent); }
+/* 侧栏展开 (>900px 且未折叠)：让出 280px 侧栏 */
 @media (min-width: 901px) {
-  /* 侧栏展开时让位 */
   body.page-tools:not(.sidebar-collapsed) .back-to-home,
   body.page-aesthetic:not(.sidebar-collapsed) .back-to-home { left: 300px; }
+}
+/* 移动端：让出左上角的 ☰ 切换按钮（位于 left:12px w:36px） */
+@media (max-width: 768px) {
+  .back-to-home { left: 60px; top: 14px; }
 }
 
 /* 页面切换：默认隐藏，仅由路由 class 激活 */
@@ -345,11 +353,14 @@ body.page-aesthetic .sidebar-header .sidebar-brand { font-size: 0.85rem; }
   border-radius: 12px; text-decoration: none; color: var(--text);
   transition: all 0.3s;
 }
-.channel-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(88,166,255,0.15); }
+.channel-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(165,231,202,0.18); }
 .ch-icon {
-  width: 50px; height: 50px; border-radius: 12px; display: flex;
-  align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+  width: 50px; height: 50px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+  background: var(--bg-elev); overflow: hidden; position: relative;
+  border: 1px solid var(--border-strong);
 }
+.ch-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ch-info { flex: 1; min-width: 0; }
 .ch-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; color: var(--text); }
 .ch-desc { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 4px; line-height: 1.4; }
@@ -427,12 +438,12 @@ body.page-aesthetic .sidebar-aes-only { display: block !important; }
 .tool-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
 .tool-card .badge-new {
   position: absolute; top: 0; right: 0;
-  background: linear-gradient(135deg, #f85149, #db6d28); color: #fff;
+  background: linear-gradient(135deg, #EC7318, #A5E7CA); color: #fff;
   font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 0 12px 0 12px;
 }
 .tool-card .badge-updated {
   position: absolute; top: 0; right: 0;
-  background: linear-gradient(135deg, #58a6ff, #bc8cff); color: #fff;
+  background: linear-gradient(135deg, #C0C9C5, #A5E7CA); color: #fff;
   font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 0 12px 0 12px;
 }
 .tool-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
@@ -612,7 +623,7 @@ details[open] .archive-content { max-height: 99999px; overflow: visible; padding
   padding: 7px 12px 7px 32px; color: var(--text); font-size: 0.82rem; width: 220px;
   transition: all 0.2s; outline: none;
 }
-.search-input:focus { border-color: var(--accent); width: 280px; background: rgba(22,27,34,1); }
+.search-input:focus { border-color: var(--accent); width: 280px; background: rgba(37,44,47,1); }
 .search-input::placeholder { color: var(--text-muted); }
 .search-icon {
   position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
@@ -642,11 +653,11 @@ details[open] .archive-content { max-height: 99999px; overflow: visible; padding
   white-space: nowrap; display: none; z-index: 200;
 }
 mark.search-hit {
-  background: linear-gradient(135deg, #f85149, #db6d28); color: #fff;
+  background: linear-gradient(135deg, #EC7318, #A5E7CA); color: #fff;
   padding: 1px 3px; border-radius: 3px; font-weight: 600;
 }
 mark.search-hit-current {
-  background: linear-gradient(135deg, #58a6ff, #bc8cff); color: #fff;
+  background: linear-gradient(135deg, #C0C9C5, #A5E7CA); color: #fff;
   padding: 1px 3px; border-radius: 3px; font-weight: 700;
   box-shadow: 0 0 0 2px rgba(88,166,255,0.4);
 }
@@ -665,7 +676,7 @@ body.sidebar-collapsed { padding-left: 64px; }
 /* Left Sidebar */
 .sidebar {
   position: fixed; top: 0; left: 0; width: 280px; height: 100vh;
-  background: linear-gradient(180deg, #0a0e14 0%, #11161e 100%);
+  background: linear-gradient(180deg, #161B1D 0%, #1D2426 100%);
   border-right: 1px solid var(--border);
   display: flex; flex-direction: column; z-index: 200;
   transition: transform 0.3s ease, width 0.3s ease;
@@ -687,7 +698,7 @@ body.sidebar-collapsed .sidebar-toggle { transform: rotate(180deg); }
 }
 .sidebar-brand {
   font-size: 1rem; font-weight: 700;
-  background: linear-gradient(135deg, #58a6ff, #bc8cff);
+  background: linear-gradient(135deg, #C0C9C5, #A5E7CA);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; display: flex; align-items: center; gap: 6px;
 }
@@ -719,7 +730,7 @@ body.sidebar-collapsed .sidebar-toggle { transform: rotate(180deg); }
   padding: 8px 12px 8px 32px; color: var(--text); font-size: 0.85rem; width: 100%;
   transition: all 0.2s; outline: none;
 }
-.sidebar-search-full:focus { border-color: var(--accent); background: rgba(22,27,34,1); }
+.sidebar-search-full:focus { border-color: var(--accent); background: rgba(37,44,47,1); }
 .sidebar-search-full::placeholder { color: var(--text-muted); }
 .sidebar-search-wrap { position: relative; }
 .sidebar-search-wrap .search-icon {
@@ -824,7 +835,7 @@ body.sidebar-collapsed .bottom-bar { left: 64px; }
   border-left: 3px solid var(--accent-purple);
   border-radius: 8px; padding: 10px 12px; transition: all 0.2s;
 }
-.term-mini:hover { border-color: var(--accent-purple); transform: translateY(-1px); background: rgba(22,27,34,1); }
+.term-mini:hover { border-color: var(--accent-purple); transform: translateY(-1px); background: rgba(37,44,47,1); }
 .term-mini .term-en {
   font-size: 0.92rem; font-weight: 700; color: var(--accent-purple); margin-bottom: 1px;
 }
@@ -844,7 +855,7 @@ body.bottom-collapsed .bottom-bar { transform: translateY(calc(100% - 44px)); }
   body.sidebar-open .sidebar { transform: translateX(0); }
   .sidebar-toggle-mobile {
     display: flex !important; position: fixed; top: 12px; left: 12px;
-    background: rgba(22,27,34,0.95); border: 1px solid var(--border);
+    background: rgba(37,44,47,0.95); border: 1px solid var(--border);
     color: var(--accent); width: 36px; height: 36px; border-radius: 8px;
     cursor: pointer; font-size: 1rem; align-items: center; justify-content: center;
     z-index: 300; backdrop-filter: blur(8px);
@@ -4813,7 +4824,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
       <div class="channel-grid">
 
         <a class="channel-card" href="https://www.youtube.com/@StudioBinder" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#58a6ff,#1f6feb);">🎬</div>
+          <div class="ch-icon"><img src="assets/avatars/studiobinder.jpg" alt="StudioBinder" loading="lazy"></div>
           <div class="ch-info">
             <div class="ch-name">StudioBinder</div>
             <div class="ch-desc">电影制作全流程 · 镜头分析 · 剧本拆解 · 业内最权威</div>
@@ -4822,7 +4833,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
         </a>
 
         <a class="channel-card" href="https://www.youtube.com/@EveryFrameaPainting" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#f772b3,#db61a2);">🎞</div>
+          <div class="ch-icon"><img src="assets/avatars/everyframe.jpg" alt="Every Frame a Painting" loading="lazy"></div>
           <div class="ch-info">
             <div class="ch-name">Every Frame a Painting</div>
             <div class="ch-desc">电影语言深度解析 · 视听教科书级频道 · 必看经典</div>
@@ -4831,7 +4842,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
         </a>
 
         <a class="channel-card" href="https://www.youtube.com/@MangoStreet" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#ffa657,#db6d28);">🎥</div>
+          <div class="ch-icon"><img src="assets/avatars/mangostreet.jpg" alt="MangoStreet" loading="lazy"></div>
           <div class="ch-info">
             <div class="ch-name">Mango Street</div>
             <div class="ch-desc">影视摄影实操 · 镜头选择 · 灯光设置 · AI 友好讲解</div>
@@ -4840,7 +4851,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
         </a>
 
         <a class="channel-card" href="https://www.youtube.com/@NoFilmSchool" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#a371f7,#8957e5);">📰</div>
+          <div class="ch-icon"><img src="assets/avatars/nofilmschool.jpg" alt="No Film School" loading="lazy"></div>
           <div class="ch-info">
             <div class="ch-name">No Film School</div>
             <div class="ch-desc">最新设备 · 软件教程 · 行业趋势 · AI 工具应用前沿</div>
@@ -4848,17 +4859,8 @@ body.sidebar-open .sidebar-backdrop { display: block; }
           </div>
         </a>
 
-        <a class="channel-card" href="https://www.youtube.com/@WongFuProductions" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#56d364,#2ea043);">🎭</div>
-          <div class="ch-info">
-            <div class="ch-name">Wong Fu Productions</div>
-            <div class="ch-desc">亚裔短片美学 · 情感叙事 · 多元文化视觉表达</div>
-            <div class="ch-meta">📺 350万+ 订阅 · 短片标杆</div>
-          </div>
-        </a>
-
         <a class="channel-card" href="https://www.youtube.com/@CaseyFaris" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#79c0ff,#388bfd);">✂️</div>
+          <div class="ch-icon"><img src="assets/avatars/caseyfaris.jpg" alt="Casey Faris" loading="lazy"></div>
           <div class="ch-info">
             <div class="ch-name">Casey Faris</div>
             <div class="ch-desc">DaVinci Resolve / 剪辑工作流 · 节奏感与效率</div>
@@ -4867,7 +4869,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
         </a>
 
         <a class="channel-card" href="https://www.youtube.com/@PeterMcKinnon" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#f0883e,#bd561d);">📷</div>
+          <div class="ch-icon"><img src="assets/avatars/peter.jpg" alt="Peter McKinnon" loading="lazy"></div>
           <div class="ch-info">
             <div class="ch-name">Peter McKinnon</div>
             <div class="ch-desc">摄影构图 · 视觉设计 · 创意短片 · 摄影圈顶流</div>
@@ -4875,17 +4877,8 @@ body.sidebar-open .sidebar-backdrop { display: block; }
           </div>
         </a>
 
-        <a class="channel-card" href="https://www.youtube.com/@Aputure" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#e3b341,#bf8700);">💡</div>
-          <div class="ch-info">
-            <div class="ch-name">Aputure</div>
-            <div class="ch-desc">专业灯光实操 · 光效教程 · 布光手法 · 器材深度</div>
-            <div class="ch-meta">📺 70万+ 订阅 · 灯光圣经</div>
-          </div>
-        </a>
-
         <a class="channel-card" href="https://www.youtube.com/@Sideways" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#ec5fbb,#bf3989);">📐</div>
+          <div class="ch-icon"><img src="assets/avatars/sideways.jpg" alt="Sideways" loading="lazy"></div>
           <div class="ch-info">
             <div class="ch-name">Sideways</div>
             <div class="ch-desc">电影剪辑分析 · 转场拆解 · 蒙太奇美学</div>
@@ -4894,7 +4887,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
         </a>
 
         <a class="channel-card" href="https://www.youtube.com/@TheCloserLook" target="_blank" rel="noopener">
-          <div class="ch-icon" style="background:linear-gradient(135deg,#56d4dd,#1f8fa6);">🎯</div>
+          <div class="ch-icon"><img src="assets/avatars/closerlook.jpg" alt="The Closer Look" loading="lazy"></div>
           <div class="ch-info">
             <div class="ch-name">The Closer Look</div>
             <div class="ch-desc">影评 + 视听语言 · 镜头解构 · 叙事拆解</div>
