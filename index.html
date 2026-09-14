@@ -121,9 +121,18 @@ body {
 .landing-hero .meta-inline {
   display: inline-flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; justify-content: center;
 }
-.landing-hero .meta-inline span {
+.landing-hero .meta-inline span,
+.landing-hero .meta-inline .meta-link {
   background: rgba(61,169,255,0.08); border: 1px solid rgba(61,169,255,0.25);
   color: var(--accent); padding: 4px 12px; border-radius: 14px; font-size: 0.75rem; font-weight: 500;
+}
+.landing-hero .meta-inline .meta-link {
+  text-decoration: none; cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+.landing-hero .meta-inline .meta-link:hover {
+  background: rgba(0,229,255,0.14); border-color: var(--accent-cyan); color: var(--accent-cyan);
+  transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,229,255,0.22);
 }
 
 .landing-grid {
@@ -882,6 +891,125 @@ body.sidebar-open .sidebar-backdrop { display: block; }
   min-height: 100vh; padding-bottom: 60px;
 }
 </style>
+
+<style>
+/* ================================================================
+   Parallax & Scroll-Motion Layer — 视差滚动 / 滚动动效增强层
+   独立样式块：不改动上方任何既有规则，删除本块即可完全回退
+   ================================================================ */
+
+/* ---------- 1) 顶部滚动进度条 ---------- */
+.parallax-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px;
+  z-index: 999; pointer-events: none;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--sp, 0));
+  background: linear-gradient(90deg, var(--accent-deep) 0%, var(--accent) 45%, var(--accent-cyan) 100%);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.55), 0 0 3px rgba(61, 169, 255, 0.85);
+  will-change: transform;
+}
+
+/* ---------- 2) 视差背景层（工具 / 审美页可见） ---------- */
+#parallaxBg {
+  position: fixed; inset: 0; z-index: -1;
+  pointer-events: none; overflow: hidden;
+}
+#parallaxBg .pb-orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(64px); will-change: transform;
+}
+#parallaxBg .pb-orb.a {
+  width: 640px; height: 640px; top: -200px; left: 6%;
+  background: radial-gradient(circle, rgba(61,169,255,0.17), transparent 68%);
+}
+#parallaxBg .pb-orb.b {
+  width: 540px; height: 540px; top: 34%; right: -160px;
+  background: radial-gradient(circle, rgba(0,229,255,0.13), transparent 68%);
+}
+#parallaxBg .pb-orb.c {
+  width: 480px; height: 480px; bottom: -180px; left: 32%;
+  background: radial-gradient(circle, rgba(27,111,206,0.17), transparent 70%);
+}
+#parallaxBg .pb-grid {
+  position: absolute; inset: -12% 0; will-change: transform;
+  background-image:
+    linear-gradient(rgba(74,92,117,0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,92,117,0.075) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 18%, #000 0%, transparent 76%);
+  mask-image: radial-gradient(ellipse at 50% 18%, #000 0%, transparent 76%);
+}
+body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
+
+/* ---------- 3) Landing 视差图层组合（指针 + 滚动） ---------- */
+#landing-page::before {
+  will-change: transform;
+  transform: translate3d(
+    calc(var(--mx, 0) * 16px),
+    calc(var(--my, 0) * 14px + var(--p-bg, 0px)),
+    0);
+}
+.landing-hero {
+  will-change: transform, opacity;
+  transform: translate3d(
+    calc(var(--mx, 0) * -9px),
+    calc(var(--my, 0) * -7px + var(--p-hero, 0px)),
+    0);
+  opacity: var(--p-hero-o, 1);
+}
+.landing-grid {
+  will-change: transform;
+  transform: translate3d(
+    calc(var(--mx, 0) * 7px),
+    calc(var(--my, 0) * 5px + var(--p-grid, 0px)),
+    0);
+}
+
+/* ---------- 4) 进入视口渐显（Reveal on scroll） ---------- */
+.reveal { opacity: 0; }
+.reveal.in { animation: pxReveal 0.72s cubic-bezier(.22,.8,.28,1) both; }
+@keyframes pxReveal {
+  from { opacity: 0; transform: translate3d(0, 26px, 0) scale(0.988); }
+  55%  { opacity: 1; }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+.reveal.px-left.in    { animation-name: pxRevealLeft; }
+@keyframes pxRevealLeft {
+  from { opacity: 0; transform: translate3d(-34px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.reveal.px-scale.in   { animation-name: pxRevealScale; }
+@keyframes pxRevealScale {
+  from { opacity: 0; transform: translate3d(0, 16px, 0) scale(0.93); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+.reveal.px-fade.in    { animation-name: pxRevealFade; }
+@keyframes pxRevealFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 卡片悬停抬升保持不变，仅在揭示结束后由 JS 移除 reveal 类以确保 hover 生效 */
+
+/* ---------- 5) 章节标题的细微视差 ---------- */
+.px-shift { will-change: transform; }
+
+/* ---------- 6) 移动端 / 低性能降级 ---------- */
+@media (max-width: 768px) {
+  #parallaxBg { opacity: 0.6; }
+  .reveal.in { animation-duration: 0.55s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .parallax-progress { display: none !important; }
+  #parallaxBg { display: none !important; }
+  .reveal { opacity: 1 !important; }
+  .reveal.in { animation: none !important; }
+  #landing-page::before,
+  .landing-hero,
+  .landing-grid,
+  .px-shift { transform: none !important; opacity: 1 !important; }
+}
+</style>
 </head>
 <body>
 
@@ -891,11 +1019,10 @@ body.sidebar-open .sidebar-backdrop { display: block; }
     <div class="landing-hero">
       <div class="badge">⚡ 2026 全景中枢 v3.0</div>
       <h1>AI 创作中枢</h1>
-      <p class="sub">工具、审美与方法论的统一入口。挑选你的起点，向下深挖。</p>
       <div class="meta-inline">
-        <span>📅 更新至 2026.09.08</span>
+        <span>📅 更新至 2026.09.14</span>
         <span>🌐 公开发布于 GitHub Pages</span>
-        <span>🧰 工具集 ai-bot.cn</span>
+        <a class="meta-link" href="https://ai-bot.cn/" target="_blank" rel="noopener">🧰 工具集 ai-bot.cn</a>
       </div>
     </div>
 
@@ -1031,11 +1158,11 @@ body.sidebar-open .sidebar-backdrop { display: block; }
     <div class="sidebar-section">
       <h4><span class="sidebar-label">📊 数据概览</span></h4>
       <div class="sidebar-stats">
-        <div class="stat-row"><span class="stat-key">📅 最后更新</span><span class="stat-val">2026.09.07</span></div>
+        <div class="stat-row"><span class="stat-key">📅 最后更新</span><span class="stat-val">2026.09.14</span></div>
         <div class="stat-row"><span class="stat-key">🔬 工具总数</span><span class="stat-val">110+</span></div>
         <div class="stat-row"><span class="stat-key">🔀 聚合平台</span><span class="stat-val">12+</span></div>
         <div class="stat-row"><span class="stat-key">💡 实战技巧</span><span class="stat-val">30+</span></div>
-        <div class="stat-row"><span class="stat-key">📰 本周资讯</span><span class="stat-val">16 条</span></div>
+        <div class="stat-row"><span class="stat-key">📰 本周资讯</span><span class="stat-val">28 条</span></div>
       </div>
     </div>
 
@@ -1058,7 +1185,15 @@ body.sidebar-open .sidebar-backdrop { display: block; }
 <section id="update-log">
   <div class="container">
     <div class="section-title"><span class="icon">📝</span> v2.0 更新日志</div>
-    <p class="section-desc">本次更新新增 30+ 款最新模型/工具，涵盖2026年5-8月所有重大发布</p>
+    <p class="section-desc">本次更新新增 30+ 款最新模型/工具，涵盖2026年5-9月所有重大发布，并持续每日同步海外前沿动态</p>
+
+    <div class="update-banner" style="border-left: 4px solid var(--accent-cyan); margin-bottom: 20px; background: linear-gradient(90deg, rgba(0,229,255,0.10), transparent);">
+      <h3>🔥 2026-09-14 每周同步更新（9/9 - 9/14）</h3>
+      <p><strong>新增资讯 12 条：</strong>DeepSeek 发布 V4.1-Flash（552B MoE · 全新 Causal Encoder-Decoder · 原生多模态视觉 · 1M 上下文 · KV Cache 压至上一代 13-25%）｜DeepSeek 9月14日起将 V4-Pro / V4-Flash 全部路由至 V4.1-Flash 并退役旧版｜OpenAI GPT-6 Astra 需求过载，暂停 $200/月 Pro 新订阅｜Anthropic CEO Dario Amodei 发表《We Must Pace the Frontier》呼吁"自愿放缓"，承诺第三方评估员永久员工级访问，Sam Altman 数小时后表示 OpenAI 跟进｜Anthropic 154 页威胁情报报告指控 7 家中国实验室蒸馏 Claude 并披露多起滥用案例｜xAI Grok 模型进驻 Microsoft Copilot（Nadella 确认）＋ 上线 Grok Bot Marketplace｜Meta 发布 Muse 自主个人代理（WhatsApp/Instagram 邮件·订票·支付），股价 +6%；AIRA3 自主科研系统夺 Kaggle 金牌｜Mistral 完成 €30 亿 D 轮（三星领投，估值 €21B+，欧洲史上最大科技股权融资）｜智谱宣布约 50 亿美元融资（20 亿配售 + 30 亿零息可转债）｜企业智能体落地潮：Cursor Projects 千级并行子代理 / Salesforce 7 个岗位化 Agentforce / 谷歌 Gemini Windows 桌面应用 / OpenAI Agents API 公测｜Google DeepMind AlphaGenome Atlas（9 亿 DNA 变异图谱）+ WeatherNext 3（5km 逐小时预报）｜NVIDIA Nemotron 奥数推理达 IMO 金牌线并开源权</p>
+      <p><strong>新增术语 12 个：</strong>Causal Encoder-Decoder、KV Cache Compression、Asymmetric Activation、Orchestrator Agent、Sub-agent Parallelism、Agent-Native OS、3D-Native World Model、Job-Ready Agent、Sovereign AI、Voluntary Slowdown、Model Distillation Claim、Zero-Coupon Convertible Bond</p>
+      <p><strong>工具卡更新：</strong>DeepSeek V4.1-Flash 新增（552B MoE · 1M 上下文 · 384K 最大输出 · $0.30/$1.20 per 1M，off-peak 半价）｜V4-Pro / V4-Flash 退役状态更新（9/14 起路由至 V4.1-Flash）｜Grok 4.6 更新（500K 上下文 + xhigh 推理档）并标注 Copilot 集成｜Gemini 3.8 Flash 新增（$0.75/$3.75 per 1M，2027.1.1 起涨至 $1.50/$7.50）｜高德 ABot-Earth 0.7 加入 3D 板块（3D 原生城市世界模型 · 单消费级 GPU 约 10 分钟生成公里级场景）</p>
+      <p><strong>归档操作：</strong>将 9/1-9/8 期间 12 条资讯与最早 12 个术语移入归档区，最新资讯区与术语学习区各恢复为最新 30 条</p>
+    </div>
 
             <div class="update-banner" style="border-left: 4px solid var(--accent-teal); margin-bottom: 20px;">
       <h3>📡 2026-09-08 每日同步更新</h3>
@@ -3040,12 +3175,96 @@ body.sidebar-open .sidebar-backdrop { display: block; }
       </div>
     </div>
 
-    <p class="last-checked">🕐 最后检查：2026年9月8日 11:55</p>
+    <p class="last-checked">🕐 最后检查：2026年9月14日 11:00</p>
 
     <!-- ===== 最新资讯 ===== -->
     <h3 class="subsection-title"><span class="sub-icon">🆕</span> 最新资讯</h3>
 
     <div class="news-grid"><div class="news-card">
+        <span class="news-date">2026-09-14</span><span class="news-source">来源：DeepSeek / benchr / AI Briefing</span>
+        <h4 class="news-title">DeepSeek 发布 V4.1-Flash：552B MoE + 全新因果编解码架构，KV Cache 压至上一代 13-25%</h4>
+        <p class="news-summary">DeepSeek 正式发布 V4.1-Flash，552B 参数 MoE，采用全新 Causal Encoder-Decoder 非对称结构（输入激活 8B / 输出激活 16B），原生多模态视觉，1M token 上下文、384K 最大输出、400+ tokens/s。关键突破是缓存成本：KV Cache 占用降至上一代 DeepSeek V4 Flash 的 13-25%，HBM 需求降至 1/4、SSD 降至 1/8。定价 $0.30/$1.20 per 1M（峰时），off-peak 半价 $0.15/$0.60。API 与开源权重同步放出，延续国产开源"以性价比换生态"路线。</p>
+        <span class="news-tag news-tag-model">新模型</span>
+        <span class="news-tag news-tag-breaking">重大</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-14</span><span class="news-source">来源：DeepSeek 服务公告 / benchr</span>
+        <h4 class="news-title">DeepSeek 退役 V4-Flash 系列，V4-Pro API 全部路由至 V4.1-Flash</h4>
+        <p class="news-summary">DeepSeek 自 2026年9月14日起停用 V4-Flash 与 V4-Flash-Vision-Exp，并将全部 V4-Pro API 请求路由至 V4.1-Flash。官方表示此后仍继续提供 V4-Pro 的 API 调用服务。这意味着 DeepSeek 主力推理栈完成一次性切换，开发方需在迁移窗口内核对上下文长度、工具调用与视觉输入的兼容性。</p>
+        <span class="news-tag news-tag-product">产品</span>
+        <span class="news-tag news-tag-industry">行业</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-13</span><span class="news-source">来源：OpenAI / The Verge / AI Briefing</span>
+        <h4 class="news-title">GPT-6 Astra 需求过载，OpenAI 暂停 $200/月 Pro 新订阅</h4>
+        <p class="news-summary">GPT-6 Astra 上线后需求激增，基础设施承压，OpenAI 暂停新的 $200/月 Pro 订阅开通。Astra 为 200B+ 参数智能体模型，支持计算机操作、编码与专业工作流，1M token 上下文，已覆盖 ChatGPT 各档位、Azure 与 AWS Bedrock。Perplexity、Cognition 等合作方已用 Astra 部署更高自主性的生产任务。</p>
+        <span class="news-tag news-tag-industry">行业</span>
+        <span class="news-tag news-tag-breaking">重大</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-12</span><span class="news-source">来源：Anthropic / Hacker News / AI Briefing</span>
+        <h4 class="news-title">Amodei 发表《We Must Pace the Frontier》呼吁自愿放缓，Altman 数小时后表态跟进</h4>
+        <p class="news-summary">Anthropic CEO Dario Amodei 发表长文，主张前沿实验室应主动放慢能力推进，让安全研究跟上，并提出三步方案，首步是为第三方评估员提供永久性的员工级访问权限。Anthropic 单方面承诺执行第一步，数小时后 Sam Altman 称 OpenAI 会"做同样的事"，并称独立评估员访问"是个好主意"。该文登上 Hacker News 550 分、784 条评论，成为本周安全议题焦点。</p>
+        <span class="news-tag news-tag-security">安全</span>
+        <span class="news-tag news-tag-breaking">重大</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-13</span><span class="news-source">来源：Anthropic 威胁情报报告 / AI Briefing</span>
+        <h4 class="news-title">Anthropic 发布 154 页威胁情报报告，指控 7 家中国实验室蒸馏 Claude</h4>
+        <p class="news-summary">Anthropic 发布迄今最详尽的威胁情报报告，覆盖 2025年12月至2026年8月间被阻断的滥用行为，涵盖网络攻击、监控、生物滥用、常规武器与非法蒸馏等七个危害领域。报告指控 7 家中国实验室（含 DeepSeek、阿里巴巴、月之暗面）通过数百万次实时交互蒸馏 Claude 训练自有模型；同时披露第四起 Claude 因测试配置错误而突破真实第三方系统的事件。</p>
+        <span class="news-tag news-tag-security">安全</span>
+        <span class="news-tag news-tag-industry">行业</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-12</span><span class="news-source">来源：Microsoft / xAI / AI Briefing</span>
+        <h4 class="news-title">xAI Grok 模型进驻 Microsoft Copilot，并上线 Grok Bot Marketplace</h4>
+        <p class="news-summary">Satya Nadella 宣布 xAI 的 Grok 模型现可在 Microsoft Copilot 内被选择调用，用户可将查询路由至 Grok 而非微软默认模型，Elon Musk 亦转发确认。此举延续微软"去单一供应商"的多样化策略。同期 xAI 上线 Grok Bot 模板市场，其自研采购智能体 Haggle Bot 通过接入 Slack、Ramp 等内部系统谈判供应商合同、识别闲置 SaaS 席位，首周为公司识别超 $10 万直接节省。</p>
+        <span class="news-tag news-tag-product">产品</span>
+        <span class="news-tag news-tag-industry">行业</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-11</span><span class="news-source">来源：Meta / NVIDIA Kaggle / AI Briefing</span>
+        <h4 class="news-title">Meta 发布 Muse 自主个人代理，AIRA3 自主科研系统夺 Kaggle 金牌</h4>
+        <p class="news-summary">Meta 发布 Muse——一个可自主收发邮件、预订行程并在 WhatsApp 与 Instagram 内完成支付的个人智能体，消息公布后股价上涨约 6%。同期 Meta 的自主科研系统 AIRA3 在 NVIDIA 主办的 Kaggle 实时竞赛中，从 4000 支队伍中排名第 8 并获金牌，该系统通过模型集成与异步智能体协调自主改进推理能力，并已在 GPU kernel 优化与古籍（阿卡德语泥板）翻译上展现能力。</p>
+        <span class="news-tag news-tag-product">产品</span>
+        <span class="news-tag news-tag-industry">行业</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-12</span><span class="news-source">来源：Mistral AI / 三星 / AI Briefing</span>
+        <h4 class="news-title">Mistral 完成 €30 亿 D 轮，三星领投创欧洲史上最大科技股权融资</h4>
+        <p class="news-summary">法国 AI 公司 Mistral AI 完成 30 亿欧元（约 33 亿美元）D 轮融资，由三星领投，投后估值 €21B+（约 240 亿美元），公司称这是欧洲科技公司史上最大规模股权融资。同期 Mistral 与 Cloudera 合作推出主权、气隙式企业 AI 方案，以"区域自主可控"为差异化定位，与美系闭源／开源阵营形成三足鼎立。本轮与 Cognition（约 20 亿美元）、Harvey（5.5 亿美元）共同构成 9 月上旬密集的 AI 大额融资潮。</p>
+        <span class="news-tag news-tag-industry">行业</span>
+        <span class="news-tag news-tag-breaking">重大</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-13</span><span class="news-source">来源：智谱 / 港交所公告 / 行业消息</span>
+        <h4 class="news-title">智谱宣布约 50 亿美元融资，大模型进入"耐力赛"</h4>
+        <p class="news-summary">智谱于 9月13日宣布完成约 50 亿美元融资，包含约 20 亿美元股份配售及约 30 亿美元零息可转债发行，距其 7 月募集约 40 亿美元仅两个月。智谱今年 1 月登陆港交所，被称为"全球大模型第一股"。同期报道显示 DeepSeek 6 月完成超 500 亿元人民币首轮融资，月之暗面半年累计融资超 39 亿美元。竞争逻辑正从"比参数"转向"比造血能力、算力壁垒与生态落地"。</p>
+        <span class="news-tag news-tag-industry">行业</span>
+        <span class="news-tag news-tag-breaking">重大</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-14</span><span class="news-source">来源：Cursor / Salesforce / Google / OpenAI</span>
+        <h4 class="news-title">企业智能体落地潮：Cursor 千级并行子代理、Salesforce 7 个岗位化 Agentforce、Gemini 桌面应用</h4>
+        <p class="news-summary">本周企业级智能体集中落地：① Cursor 推出 Projects，云端编排智能体可规划任务并分派给多达上千个并行子代理，笔记本合盖后仍在运行，支持 Slack 触发与定时自动运行；② Salesforce 在 Dreamforce 前一次性发布 7 个"即插即用"Agentforce 智能体，按业务职能打包、无需重度定制即可上线；③ 谷歌发布 Gemini Windows 桌面应用，Alt+Space 全局唤起，支持多步骤任务与 Nano Banana 生成图片、Gemini Omni 生成视频；④ OpenAI 开放 Agents API 公测，将支撑 Codex 的代理框架与基础设施向所有开发者开放，按 token 与工具调用量计费。</p>
+        <span class="news-tag news-tag-product">产品</span>
+        <span class="news-tag news-tag-model">新模型</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-14</span><span class="news-source">来源：高德 / 蚂蚁集团 / 外滩大会</span>
+        <h4 class="news-title">高德发布 3D 原生城市世界模型 ABot-Earth 0.7，蚂蚁发布 Agent 原生操作系统"灵影"</h4>
+        <p class="news-summary">高德推出 3D 原生城市世界模型 ABot-Earth 0.7：从一张卫星图或一段文字出发，单块消费级 GPU 约 10 分钟即可生成公里级 3D 城市场景，效率较此前提升千倍；采用端到端 3DGS 生成，同一套模型覆盖星球、城市到街景地标的连续尺度，已覆盖 196+ 国家和地区。蚂蚁集团在 2026 外滩大会发布面向多模态新终端的 Agent 原生操作系统"灵影"，强调系统级智能体调度与端侧多模态适配，标志端侧 AI 从 App 走向系统承载。</p>
+        <span class="news-tag news-tag-model">新模型</span>
+        <span class="news-tag news-tag-product">产品</span>
+      </div>
+      <div class="news-card">
+        <span class="news-date">2026-09-11</span><span class="news-source">来源：NVIDIA / AlphaGenome / WeatherNext</span>
+        <h4 class="news-title">NVIDIA Nemotron 奥数推理摘 IMO 金牌线并开源，Google DeepMind 连发基因组与天气模型</h4>
+        <p class="news-summary">英伟达发布基于 Nemotron 3 Ultra 的纯自然语言奥数推理方案，在 2026 国际数学奥林匹克取得 30 分、达到金牌分数线，不依赖形式化证明器或外部工具，并同步开源微调检查点、训练推理代码与含 200 道难题的 Nemotron-IMO-Bench。同期 Google DeepMind 发布 AlphaGenome Atlas（可搜索数据库中映射人类基因组全部 90 亿个单碱基变异的预测分子效应，1PB 数据集）与 WeatherNext 3（5km 逐小时全球天气预报，降水精度提升最高 50%）。</p>
+        <span class="news-tag news-tag-model">新模型</span>
+        <span class="news-tag news-tag-model">开源</span>
+      </div>
+      <div class="news-card">
         <span class="news-date">2026-09-08</span><span class="news-source">来源：OpenAI / Fortune / The Decoder</span>
         <h4 class="news-title">OpenAI GPT-6 Astra 基准数值一天三变，"benchmaxxing"争议四起</h4>
         <p class="news-summary">9月3日Astra发布后，多个 headline 数字在数小时内反复修改：幻觉率 4.2% → 2% → 4.2%，ARC-AGI-3 从 98.6% 草稿变为 99.99% 线上版本，标准 harness 仅约 66%。Stanford 研究者将此类现象称为 "benchmaxxing"——针对基准调优以追求 headline 数字。OpenAI 回应称是"常规噪声修正"。AI Daily Digest 提醒采购方在发布日截图留档。</p>
@@ -3191,6 +3410,90 @@ body.sidebar-open .sidebar-backdrop { display: block; }
 
     <div class="term-grid">
 <div class="term-card">
+        <div class="term-en">Causal Encoder-Decoder</div>
+        <div class="term-cn">因果编码器-解码器</div>
+        <p class="term-def">DeepSeek V4.1-Flash 采用的非对称架构：编码器负责压缩输入、解码器负责生成输出，输入激活 8B、输出激活 16B，在 552B 总参数下把单次激活量压到极低。相较传统对称 MoE，这种设计更贴合"读少写多"的长上下文与多模态任务分布，兼顾前沿能力与推理成本。</p>
+        <p class="term-example">"DeepSeek's V4.1-Flash uses a causal encoder-decoder that activates 8B for input and 16B for output."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">KV Cache Compression</div>
+        <div class="term-cn">KV 缓存压缩</div>
+        <p class="term-def">通过架构改造降低推理时键值缓存（KV Cache）占用，从而减少显存与存储开销的技术。V4.1-Flash 将 KV Cache 压至上一代的 13-25%，HBM 需求降至 1/4、SSD 需求降至 1/8，直接降低长上下文与 Agent 类任务的缓存命中成本，是 2026 年"低成本高上下文"竞争的关键指标。</p>
+        <p class="term-example">"KV cache compression cut memory use to 13-25% of the previous generation, slashing long-context inference cost."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">Asymmetric Activation</div>
+        <div class="term-cn">非对称激活</div>
+        <p class="term-def">MoE 模型中输入与输出路径激活参数规模不一致的设计（如 8B 输入 / 16B 输出）。通过让"理解"与"生成"使用不同容量的专家，模型在保持总参数规模的同时，把算力花在真正困难的部分，是降低单位 token 成本的重要工程手段。</p>
+        <p class="term-example">"Asymmetric activation lets the model spend more compute on generation than on reading its input."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">Orchestrator Agent</div>
+        <div class="term-cn">编排智能体</div>
+        <p class="term-def">Cursor Projects 引入的云端智能体：在云端规划任务并分派给多达上千个并行子代理执行，每个项目拥有专属云机器，笔记本合盖后任务仍持续运行，并可维护跨数月的共享上下文。支持 Slack 触发或定时自动运行，把编码智能体从"单次对话"推向"长期运转的组织"。</p>
+        <p class="term-example">"Cursor's Projects runs a cloud orchestrator agent that dispatches work to up to a thousand parallel sub-agents."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">Sub-agent Parallelism</div>
+        <div class="term-cn">子代理并行</div>
+        <p class="term-def">由单一编排智能体同时调度多个子代理执行分支任务，把原本串行的 codebase 级工作并行化。收益是交付速度大幅提升，代价是任务拆分、冲突合并与结果校验的协调成本上升，也是"智能体团队"能否真正替代多人协作的关键工程点。</p>
+        <p class="term-example">"Sub-agent parallelism lets one orchestrator split a large codebase task across many workers at once."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">Agent-Native OS</div>
+        <div class="term-cn">智能体原生操作系统</div>
+        <p class="term-def">蚂蚁集团在 2026 外滩大会发布的"灵影"即属此类：从系统层为多模态新终端与智能体调度而设计，强调对多模态设备与多智能体协同的原生适配，而非在传统 OS 上叠加 App。标志端侧 AI 的承载形态从"应用"走向"系统级智能体调度"。</p>
+        <p class="term-example">"Ant Group unveiled Lingying, an agent-native OS built for multimodal devices rather than apps."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">3D-Native World Model</div>
+        <div class="term-cn">3D 原生世界模型</div>
+        <p class="term-def">高德 ABot-Earth 0.7 代表的建模范式：从一张卫星图或一段文字出发，端到端直接生成 3DGS 格式的公里级城市场景，单块消费级 GPU 约 10 分钟完成，效率较此前提升千倍。同一套模型覆盖星球、城市到街景地标的连续尺度，把城市级 3D 生成从"专业算力 + 长时间"变为"消费级显卡 + 十分钟"。</p>
+        <p class="term-example">"Amap's ABot-Earth 0.7 generates kilometer-scale 3D scenes on a single consumer GPU in about ten minutes."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">Job-Ready Agent</div>
+        <div class="term-cn">岗位就绪智能体</div>
+        <p class="term-def">Salesforce 在 Dreamforce 前一次性发布的 7 个 Agentforce 智能体所定义的形态：每个智能体面向独立业务职能（销售开发、客户服务、市场营销等）打包，设计目标是无须重度定制即可上线运行。企业采购 AI 的痛点正从"能力够不够"转向"能不能直接上岗"。</p>
+        <p class="term-example">"Salesforce shipped seven job-ready Agentforce agents that go live without heavy customization."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">Sovereign AI</div>
+        <div class="term-cn">主权 AI</div>
+        <p class="term-def">强调对模型、数据与部署位置保持更大自主控制权的路线，常见于受监管或战略重要场景。Mistral 以欧洲主权 AI 为定位完成 €30 亿 D 轮，并与 Cloudera 推出气隙式企业方案；NVIDIA 与 Palantir 也在供应链中部署由 Nemotron 开源模型构成的主权 AI 栈。</p>
+        <p class="term-example">"Mistral raised €3B positioning itself as Europe's sovereign-AI champion, pairing with Cloudera for air-gapped deployments."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">Voluntary Slowdown</div>
+        <div class="term-cn">自愿放缓</div>
+        <p class="term-def">Dario Amodei 在《We Must Pace the Frontier》中提出的安全主张：在前沿实验室尚未解决对齐与监控问题前，应主动放慢能力推进速度，让安全研究跟上，并建立国际协调的强制性安全底线。方案首步是为第三方评估员提供永久、员工级的模型访问权限——Anthropic 已单方面承诺，OpenAI 随后表态跟进。</p>
+        <p class="term-example">"Amodei's call for a voluntary slowdown begins with permanent employee-level access for third-party evaluators."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">Model Distillation Claim</div>
+        <div class="term-cn">模型蒸馏指控</div>
+        <p class="term-def">以他人模型输出为训练数据、训练自家模型的合规争议。Anthropic 154 页威胁情报报告指控 7 家中国实验室（含 DeepSeek、阿里巴巴、月之暗面）通过数百万次实时交互蒸馏 Claude 以训练自有模型。此类争议涉及服务条款、出口管制与模型权属，正成为跨国 AI 竞争中的常态化摩擦点。</p>
+        <p class="term-example">"Anthropic's threat report accused seven China-based labs of distilling Claude through millions of live exchanges."</p>
+      </div>
+
+      <div class="term-card">
+        <div class="term-en">Zero-Coupon Convertible Bond</div>
+        <div class="term-cn">零息可转债</div>
+        <p class="term-def">不支付票面利息、可在约定条件下转换为公司股票的公司债。智谱约 50 亿美元融资即由约 20 亿美元股份配售与约 30 亿美元零息可转债构成（距上次 40 亿美元融资仅两个月）。因转股前几乎无现金付息压力，成为大模型公司在高投入期进行大额融资的常用工具，也隐含对未来估值与股权稀释的博弈。</p>
+        <p class="term-example">"Zhipu's ~$5B raise bundled a $2B share placement with $3B in zero-coupon convertible bonds."</p>
+      </div>
+
+<div class="term-card">
         <div class="term-en">Benchmaxxing</div>
         <div class="term-cn">基准刷分</div>
         <p class="term-def">针对基准测试进行调优以追求 headline 数字，而非真实能力改进的做法。GPT-6 Astra 发布后多个 benchmark 数字在数小时内反复修改，被 Stanford 研究者以此词形容，引发对模型发布透明度的讨论。</p>
@@ -3316,6 +3619,18 @@ body.sidebar-open .sidebar-backdrop { display: block; }
         <p class="term-example">"Claude designed protein minibinders against 14 of 15 targets, beating industry hit rates by 2x."</p>
       </div>
 
+
+          </div>
+
+
+    <div class="archive-section">
+      <details>
+        <summary class="archive-toggle">
+          <span>📦 历史资讯归档（点击展开查看旧内容）</span>
+          <span class="archive-icon">▶</span>
+        </summary>
+        <div class="archive-content">
+
       <div class="term-card">
         <div class="term-en">SDR-to-HDR Upscaling</div>
         <div class="term-cn">SDR 转 HDR 视频增强</div>
@@ -3400,16 +3715,6 @@ body.sidebar-open .sidebar-backdrop { display: block; }
         <p class="term-example">"Hugging Face's Gradio Workflows turns chained Python functions into deployable REST APIs on a visual canvas."</p>
       </div>
 
-          </div>
-
-
-    <div class="archive-section">
-      <details>
-        <summary class="archive-toggle">
-          <span>📦 历史资讯归档（点击展开查看旧内容）</span>
-          <span class="archive-icon">▶</span>
-        </summary>
-        <div class="archive-content">
                                 <div class="term-card">
         <div class="term-en">Stamped Tracking GUID</div>
         <div class="term-cn">注入式追踪 GUID</div>
@@ -4915,7 +5220,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
 <!-- Footer (landing page 也会用到，但 tools/aesthetic 模式下隐藏) -->
 <div class="footer" id="mainFooter">
   <p>📊 2026 AI 创作中枢 · 工具 & 审美双轨</p>
-  <p>更新至 2026年9月8日 · AI工具 110+ 款 · 视听提升 4 大模块 · GitHub Pages 永久公开链接</p>
+  <p>更新至 2026年9月14日 · AI工具 110+ 款 · 视听提升 4 大模块 · GitHub Pages 永久公开链接</p>
   <p style="margin-top:8px;">本报告基于公开网络资料整理，价格和功能信息可能随时间变化，请以官方为准</p>
 </div>
 
@@ -5356,6 +5661,223 @@ body.sidebar-open .sidebar-backdrop { display: block; }
   window.addEventListener('hashchange', function() {
     applyRoute(parseHash());
   });
+})();
+
+/* ===== Parallax & Scroll-Motion Engine — 视差滚动增强（独立模块，不侵入既有逻辑） ===== */
+(function() {
+  'use strict';
+
+  var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var root = document.documentElement;
+  var body = document.body;
+  var mqMobile = window.matchMedia ? window.matchMedia('(max-width: 768px)') : { matches: false };
+
+  function isSubPage() {
+    return body.classList.contains('page-tools') || body.classList.contains('page-aesthetic');
+  }
+  function hasAncestor(el, cls) {
+    var p = el.parentNode;
+    while (p && p.nodeType === 1) {
+      if (p.classList && p.classList.contains(cls)) return true;
+      if (p === body) return false;
+      p = p.parentNode;
+    }
+    return false;
+  }
+  function clearReveal(el) {
+    el.classList.remove('reveal', 'in', 'px-fade', 'px-left', 'px-scale');
+    el.style.animationDelay = '';
+  }
+  function reveal(el) {
+    var d = (parseInt(el.getAttribute('data-pxi') || '0', 10) || 0) * 55;
+    el.style.animationDelay = d + 'ms';
+    el.classList.add('in');
+    var done = function(ev) {
+      if (ev && ev.target !== el) return;
+      if (ev && ev.animationName && ev.animationName.indexOf('pxReveal') !== 0) return;
+      el.removeEventListener('animationend', done);
+      clearReveal(el);
+    };
+    el.addEventListener('animationend', done);
+    // 安全网：动画被中断（切页/隐藏）时也要恢复可见与 hover 效果
+    setTimeout(function() { if (el.classList.contains('in')) clearReveal(el); }, d + 1100);
+  }
+
+  if (reduce) return;
+
+  /* ---------- 1) 顶部滚动进度条 ---------- */
+  var bar = document.createElement('div');
+  bar.className = 'parallax-progress';
+  body.appendChild(bar);
+
+  /* ---------- 2) 视差背景层 ---------- */
+  var bg = document.createElement('div');
+  bg.id = 'parallaxBg';
+  bg.innerHTML = '<div class="pb-grid"></div>' +
+                 '<div class="pb-orb a"></div>' +
+                 '<div class="pb-orb b"></div>' +
+                 '<div class="pb-orb c"></div>';
+  body.appendChild(bg);
+  var pbGrid = bg.querySelector('.pb-grid');
+  var orbA = bg.querySelector('.pb-orb.a');
+  var orbB = bg.querySelector('.pb-orb.b');
+  var orbC = bg.querySelector('.pb-orb.c');
+
+  /* ---------- 3) Landing 滚动范围 ---------- */
+  var landing = document.getElementById('landing-page');
+  var landMax = 1;
+  function measureLanding() {
+    if (!landing) return;
+    landMax = Math.max(1, landing.offsetHeight - (window.innerHeight || 1));
+  }
+  measureLanding();
+
+  /* ---------- 4) 指针视差（仅 landing，平滑跟随） ---------- */
+  var px = 0, py = 0, tx = 0, ty = 0, looping = false;
+  function loop() {
+    if (document.hidden) { looping = false; return; }
+    px += (tx - px) * 0.08;
+    py += (ty - py) * 0.08;
+    if (landing) {
+      landing.style.setProperty('--mx', px.toFixed(3));
+      landing.style.setProperty('--my', py.toFixed(3));
+    }
+    if (Math.abs(tx - px) > 0.0015 || Math.abs(ty - py) > 0.0015) {
+      requestAnimationFrame(loop);
+    } else {
+      looping = false;
+    }
+  }
+  window.addEventListener('mousemove', function(e) {
+    if (isSubPage() || mqMobile.matches) return;
+    tx = (e.clientX / (window.innerWidth || 1) - 0.5) * 2;
+    ty = (e.clientY / (window.innerHeight || 1) - 0.5) * 2;
+    if (!looping) { looping = true; requestAnimationFrame(loop); }
+  }, { passive: true });
+
+  /* ---------- 5) 章节标题的滚动视差 ---------- */
+  var titles = [];
+  (function collectTitles() {
+    var all = document.querySelectorAll('.section-title');
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (hasAncestor(el, 'archive-content')) continue;
+      if (hasAncestor(el, 'bottom-bar') || hasAncestor(el, 'sidebar')) continue;
+      el.classList.add('px-shift');
+      el.__pxCur = 0;
+      titles.push(el);
+    }
+  })();
+  function shiftTitles() {
+    if (mqMobile.matches || !titles.length) return;
+    var mid = (window.innerHeight || 1) * 0.5;
+    for (var i = 0; i < titles.length; i++) {
+      var el = titles[i];
+      var cur = el.__pxCur || 0;
+      var base = el.getBoundingClientRect().top - cur;
+      var d = (base - mid) * 0.05;
+      if (d > 12) d = 12; else if (d < -12) d = -12;
+      if (Math.abs(d - cur) < 0.15) continue;
+      el.__pxCur = d;
+      el.style.transform = 'translate3d(0,' + d.toFixed(2) + 'px,0)';
+    }
+  }
+
+  /* ---------- 6) 滚动驱动渲染（rAF 节流） ---------- */
+  var ticking = false;
+  function render() {
+    ticking = false;
+    var y = window.pageYOffset || root.scrollTop || 0;
+    var span = root.scrollHeight - window.innerHeight;
+    var p = span > 0 ? y / span : 0;
+    if (p < 0) p = 0; else if (p > 1) p = 1;
+    // 在 landing 时进度条保持空（避免短滚动条带来的误导性）
+    root.style.setProperty('--sp', (isSubPage() ? p : 0).toFixed(4));
+
+    if (isSubPage()) {
+      if (pbGrid) pbGrid.style.transform = 'translate3d(0,' + (y * 0.055).toFixed(1) + 'px,0)';
+      if (orbA) orbA.style.transform = 'translate3d(0,' + (y * 0.130).toFixed(1) + 'px,0)';
+      if (orbB) orbB.style.transform = 'translate3d(0,' + (-y * 0.090).toFixed(1) + 'px,0)';
+      if (orbC) orbC.style.transform = 'translate3d(0,' + (y * 0.075).toFixed(1) + 'px,0)';
+      shiftTitles();
+    } else if (landing) {
+      // Landing 视差：背景 < 网格 < 标题，三层不同速率，纯位移无淡出，柔和不抢戏
+      landing.style.setProperty('--p-bg',   (y * 0.32).toFixed(1) + 'px');
+      landing.style.setProperty('--p-hero', (y * 0.22).toFixed(1) + 'px');
+      landing.style.setProperty('--p-grid', (y * 0.09).toFixed(1) + 'px');
+    }
+  }
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(render);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ---------- 7) 进入视口渐显（Reveal on scroll） ---------- */
+  var SELECTOR = '.news-card,.term-card,.tool-card,.tip-card,.deprecated-card,' +
+                 '.channel-card,.decompose-card,.aes-card,.movie-item,' +
+                 '.update-banner,.section-title,.section-lead,.section-desc,' +
+                 '.landing-card,.table-wrap';
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries) {
+      for (var k = 0; k < entries.length; k++) {
+        if (!entries[k].isIntersecting) continue;
+        reveal(entries[k].target);
+        io.unobserve(entries[k].target);
+      }
+    }, { root: null, rootMargin: '0px 0px -6% 0px', threshold: 0.04 });
+
+    var counters = new WeakMap();
+    var nodes = document.querySelectorAll(SELECTOR);
+    for (var n = 0; n < nodes.length; n++) {
+      var el = nodes[n];
+      if (el.getAttribute('data-px-ready') === '1') continue;
+      if (hasAncestor(el, 'bottom-bar') || hasAncestor(el, 'sidebar')) continue;
+      el.setAttribute('data-px-ready', '1');
+      var par = el.parentNode || body;
+      var idx = counters.get(par) || 0;
+      counters.set(par, idx + 1);
+      el.setAttribute('data-pxi', String(idx % 8));
+      el.classList.add('reveal');
+      if (el.classList.contains('section-title')) {
+        el.classList.add('px-fade');           // 仅淡入，避免与标题视差 transform 冲突
+      } else if (el.classList.contains('landing-card')) {
+        el.classList.add('px-scale');
+      } else if (el.classList.contains('update-banner') ||
+                 el.classList.contains('section-lead') ||
+                 el.classList.contains('section-desc')) {
+        el.classList.add('px-left');
+      }
+      io.observe(el);
+    }
+  } else {
+    // 不支持 IntersectionObserver：不做渐显，内容直接可见
+  }
+
+  /* ---------- 8) 路由切换 / 尺寸变化时重算 ---------- */
+  window.addEventListener('hashchange', function() {
+    setTimeout(function() {
+      px = 0; py = 0; tx = 0; ty = 0;
+      if (landing) {
+        landing.style.setProperty('--mx', '0');
+        landing.style.setProperty('--my', '0');
+      }
+      measureLanding();
+      render();
+      shiftTitles();
+    }, 80);
+  });
+  window.addEventListener('resize', function() {
+    measureLanding();
+    render();
+  }, { passive: true });
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) render();
+  });
+
+  render();
 })();
 </script>
 
