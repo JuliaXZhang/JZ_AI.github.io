@@ -992,6 +992,9 @@ body:hover .parallax-progress { box-shadow: 0 0 26px rgba(0, 229, 255, 0.95), 0 
   position: fixed; inset: 0; z-index: -1;
   pointer-events: none; overflow: hidden;
   animation: bgHue 42s ease-in-out infinite;
+  /* 整体跟随鼠标反向偏移，营造纵深感 */
+  transform: translate3d(calc(var(--bgmx, 0) * -16px), calc(var(--bgmy, 0) * -12px), 0);
+  will-change: transform;
 }
 @keyframes bgHue {
   0%, 100% { filter: hue-rotate(0deg) brightness(1); }
@@ -6743,8 +6746,21 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
   }
   measureLanding();
 
-  /* ---------- 4) 指针视差（仅 landing，平滑跟随） ---------- */
+  /* ---------- 4) 指针视差（landing + 子页背景都跟随，平滑） ---------- */
   var px = 0, py = 0, tx = 0, ty = 0, looping = false;
+  // 当前 y（render 和 mousemove 共享）
+  var curY = 0;
+  // 光晕位置公式：累计 y 驱动持续动态 + 鼠标跟随
+  function updateBgParallax() {
+    var y = curY;
+    if (!isSubPage()) return;
+    if (pbGrid) pbGrid.style.transform = 'translate3d(' + (Math.sin(y * 0.0008) * 18 + px * 12).toFixed(1) + 'px,' + (y * 0.03 + Math.sin(y * 0.0011) * 8 + py * 7).toFixed(1) + 'px,0)';
+    if (orbA)   orbA.style.transform   = 'translate3d(' + (Math.sin(y * 0.0009 + 0) * 38 + px * 24).toFixed(1) + 'px,' + (y * 0.008 + Math.sin(y * 0.0010 + 0) * 50 + py * 16).toFixed(1) + 'px,0) scale(' + (1 + Math.sin(y * 0.0007) * 0.07).toFixed(3) + ')';
+    if (orbB)   orbB.style.transform   = 'translate3d(' + (Math.cos(y * 0.0009 + 1) * 34 + px * 20).toFixed(1) + 'px,' + (-y * 0.008 + Math.cos(y * 0.0010 + 1) * 52 + py * 14).toFixed(1) + 'px,0) scale(' + (1 - Math.cos(y * 0.0007) * 0.06).toFixed(3) + ')';
+    if (orbC)   orbC.style.transform   = 'translate3d(' + (Math.sin(y * 0.0009 + 2) * 32 + px * 22).toFixed(1) + 'px,' + (y * 0.008 + Math.sin(y * 0.0010 + 2) * 48 + py * 12).toFixed(1) + 'px,0) scale(' + (1 + Math.sin(y * 0.0007 + 1) * 0.05).toFixed(3) + ')';
+    if (orbD)   orbD.style.transform   = 'translate3d(' + (Math.cos(y * 0.0009 + 3) * 40 + px * 18).toFixed(1) + 'px,' + (-y * 0.008 + Math.sin(y * 0.0010 + 3) * 50 + py * 18).toFixed(1) + 'px,0) scale(' + (1 + Math.cos(y * 0.0007 + 2) * 0.06).toFixed(3) + ')';
+    if (orbE)   orbE.style.transform   = 'translate3d(' + (Math.sin(y * 0.0009 + 4) * 36 + px * 20).toFixed(1) + 'px,' + (y * 0.008 + Math.cos(y * 0.0010 + 4) * 48 + py * 14).toFixed(1) + 'px,0) scale(' + (1 - Math.sin(y * 0.0007 + 3) * 0.05).toFixed(3) + ')';
+  }
   function loop() {
     if (document.hidden) { looping = false; return; }
     px += (tx - px) * 0.08;
@@ -6753,6 +6769,10 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
       landing.style.setProperty('--mx', px.toFixed(3));
       landing.style.setProperty('--my', py.toFixed(3));
     }
+    bg.style.setProperty('--bgmx', px.toFixed(3));
+    bg.style.setProperty('--bgmy', py.toFixed(3));
+    // 鼠标移动时也更新光晕（不依赖 scroll）
+    updateBgParallax();
     if (Math.abs(tx - px) > 0.0015 || Math.abs(ty - py) > 0.0015) {
       requestAnimationFrame(loop);
     } else {
@@ -6760,7 +6780,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
     }
   }
   window.addEventListener('mousemove', function(e) {
-    if (isSubPage() || mqMobile.matches) return;
+    if (mqMobile.matches) return;
     tx = (e.clientX / (window.innerWidth || 1) - 0.5) * 2;
     ty = (e.clientY / (window.innerHeight || 1) - 0.5) * 2;
     if (!looping) { looping = true; requestAnimationFrame(loop); }
@@ -6799,6 +6819,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
   function render() {
     ticking = false;
     var y = window.pageYOffset || root.scrollTop || 0;
+    curY = y;
     var span = root.scrollHeight - window.innerHeight;
     var p = span > 0 ? y / span : 0;
     if (p < 0) p = 0; else if (p > 1) p = 1;
@@ -6806,15 +6827,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
     root.style.setProperty('--sp', (isSubPage() ? p : 0).toFixed(4));
 
     if (isSubPage()) {
-      var pSub = p; // 0..1 子页滚动进度
-      // 长页面（tools 35000+px / aes 10000+px）下若 y 系数过大，光晕会被推离 viewport
-      // 解决：y 方向 = 小幅线性视差 + 正弦循环，振幅有限，5 个光晕不同相位错落
-      if (pbGrid) pbGrid.style.transform = 'translate3d(0,' + (y * 0.03 + Math.sin(y * 0.0011) * 8).toFixed(1) + 'px,0)';
-      if (orbA)   orbA.style.transform   = 'translate3d(' + (Math.sin(pSub * Math.PI * 2) * 30).toFixed(1) + 'px,' + (y * 0.008 + Math.sin(y * 0.0010) * 50).toFixed(1) + 'px,0) scale(' + (1 + Math.sin(pSub * Math.PI * 2) * 0.06).toFixed(3) + ')';
-      if (orbB)   orbB.style.transform   = 'translate3d(' + (Math.cos(pSub * Math.PI * 2) * 28).toFixed(1) + 'px,' + (-y * 0.008 + Math.cos(y * 0.0010 + 1) * 52).toFixed(1) + 'px,0) scale(' + (1 - Math.cos(pSub * Math.PI * 2) * 0.05).toFixed(3) + ')';
-      if (orbC)   orbC.style.transform   = 'translate3d(' + (Math.sin(pSub * Math.PI * 2 + 1) * 26).toFixed(1) + 'px,' + (y * 0.008 + Math.sin(y * 0.0010 + 2) * 48).toFixed(1) + 'px,0) scale(' + (1 + Math.cos(pSub * Math.PI * 2) * 0.04).toFixed(3) + ')';
-      if (orbD)   orbD.style.transform   = 'translate3d(' + (Math.cos(pSub * Math.PI * 2 + 1) * 32).toFixed(1) + 'px,' + (-y * 0.008 + Math.sin(y * 0.0010 + 3) * 50).toFixed(1) + 'px,0) scale(' + (1 + Math.sin(pSub * Math.PI * 2 + 1) * 0.06).toFixed(3) + ')';
-      if (orbE)   orbE.style.transform   = 'translate3d(' + (Math.sin(pSub * Math.PI * 2 + 2) * 28).toFixed(1) + 'px,' + (y * 0.008 + Math.cos(y * 0.0010 + 4) * 48).toFixed(1) + 'px,0) scale(' + (1 - Math.sin(pSub * Math.PI * 2 + 2) * 0.05).toFixed(3) + ')';
+      updateBgParallax();
       shiftTitles();
     } else if (landing) {
       // Landing 视差：背景 < 网格 < 标题，三层不同速率，纯位移无淡出，柔和不抢戏
@@ -6880,6 +6893,8 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
         landing.style.setProperty('--mx', '0');
         landing.style.setProperty('--my', '0');
       }
+      bg.style.setProperty('--bgmx', '0');
+      bg.style.setProperty('--bgmy', '0');
       measureLanding();
       render();
       shiftTitles();
