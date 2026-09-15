@@ -293,9 +293,14 @@ body.page-aesthetic .sidebar-header .sidebar-brand { font-size: 0.85rem; }
 .aes-card p { color: var(--text-dim); font-size: 0.88rem; line-height: 1.6; margin: 0 0 14px; }
 .aes-image-wrap {
   border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
-  background: #080B10; aspect-ratio: 16/9;
+  background: #080B10; aspect-ratio: 16/9; position: relative;
 }
-.aes-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.aes-image-wrap::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(27,111,206,0.28), rgba(0,229,255,0.14));
+  mix-blend-mode: overlay; pointer-events: none;
+}
+.aes-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.78) contrast(1.08) brightness(0.96); }
 
 /* 资源链接列表 */
 .resource-grid {
@@ -361,9 +366,48 @@ body.page-aesthetic .sidebar-header .sidebar-brand { font-size: 0.85rem; }
   display: flex; align-items: center; gap: 10px;
 }
 .movie-tag {
-  margin-left: auto; font-size: 0.72rem; padding: 2px 10px;
-  background: rgba(0,229,255,0.15); color: var(--accent-pink);
+  font-size: 0.72rem; padding: 2px 10px;
+  background: rgba(0,229,255,0.15); color: var(--accent-cyan);
   border-radius: 10px; font-weight: 500;
+}
+
+/* 电影卡片网格 */
+.movie-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px; margin: 14px 0 26px;
+}
+.movie-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  transition: all 0.25s; cursor: default;
+}
+.movie-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 8px 24px rgba(0,229,255,0.12);
+}
+.movie-card .movie-thumb {
+  aspect-ratio: 16/9; overflow: hidden;
+  background: #080B10; position: relative;
+}
+.movie-card .movie-thumb::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(27,111,206,0.28), rgba(0,229,255,0.14));
+  mix-blend-mode: overlay; pointer-events: none;
+}
+.movie-card .movie-thumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.78) contrast(1.08) brightness(0.96);
+  transition: transform 0.4s;
+}
+.movie-card:hover .movie-thumb img { transform: scale(1.04); }
+.movie-card .movie-info {
+  padding: 10px 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.movie-card h4 {
+  margin: 0; font-size: 0.88rem; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 /* 频道网格 */
@@ -671,10 +715,30 @@ details[open] .archive-content { max-height: 99999px; overflow: visible; padding
 }
 .search-nav-btn:hover { color: var(--accent); border-color: var(--accent); }
 .search-no-result {
-  position: absolute; top: 38px; right: 0; background: rgba(0,229,255,0.95);
-  border: 1px solid rgba(0,229,255,0.60); color: var(--accent-orange);
+  position: absolute; top: 30px; right: 0; background: rgba(0,229,255,0.95);
+  border: 1px solid rgba(0,229,255,0.60); color: #080B10;
   padding: 6px 12px; border-radius: 6px; font-size: 0.78rem;
   white-space: nowrap; display: none; z-index: 200;
+}
+.search-ctrls {
+  position: relative;
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 6px;
+}
+.search-ctrls .bottom-bar-btn {
+  width: 24px; height: 24px; border-radius: 5px;
+  font-size: 0.72rem; line-height: 1;
+  background: rgba(61,169,255,0.08);
+  border-color: rgba(61,169,255,0.18);
+  flex-shrink: 0;
+}
+.search-ctrls .bottom-bar-btn:hover {
+  background: rgba(0,229,255,0.14);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.search-ctrls .bottom-bar-btn:disabled {
+  opacity: 0.35; cursor: default;
 }
 mark.search-hit {
   background: linear-gradient(135deg, #00E5FF, #3DA9FF); color: #080B10;
@@ -1117,7 +1181,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
       </div>
     </div>
 
-    <!-- Search -->
+    <!-- Search: Tools -->
     <div class="sidebar-section sidebar-tools-only">
       <h4><span class="sidebar-label">🔍 快速搜索</span></h4>
       <div class="sidebar-search-wrap">
@@ -1125,10 +1189,10 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
         <input type="text" id="pageSearch" class="sidebar-search-full" placeholder="搜索报告内容..." autocomplete="off">
         <span class="sidebar-counter" id="searchCounter">0</span>
       </div>
-      <div class="sidebar-search-wrap" style="margin-top:6px; position:relative;">
-        <button class="bottom-bar-btn" id="searchPrev" title="上一个 (Shift+Enter)">▲</button>
-        <button class="bottom-bar-btn" id="searchNext" title="下一个 (Enter)">▼</button>
-        <button class="bottom-bar-btn" id="searchClear" title="清空 (Esc)" style="margin-left:4px;">✕</button>
+      <div class="search-ctrls">
+        <button class="bottom-bar-btn" id="searchPrev" title="上一个 (Shift+Enter)">↑</button>
+        <button class="bottom-bar-btn" id="searchNext" title="下一个 (Enter)">↓</button>
+        <button class="bottom-bar-btn" id="searchClear" title="清空 (Esc)">×</button>
         <div class="search-no-result" id="searchNoResult">未找到匹配内容</div>
       </div>
     </div>
@@ -1152,6 +1216,22 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
       </nav>
     </div>
 
+    <!-- Search: Aesthetic -->
+    <div class="sidebar-section sidebar-aes-only" style="display:none;">
+      <h4><span class="sidebar-label">🔍 搜索视听板块</span></h4>
+      <div class="sidebar-search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="aesSearch" class="sidebar-search-full" placeholder="搜索景别 / 转场 / 音乐 / 拉片..." autocomplete="off">
+        <span class="sidebar-counter" id="aesSearchCounter">0</span>
+      </div>
+      <div class="search-ctrls">
+        <button class="bottom-bar-btn" id="aesSearchPrev" title="上一个 (Shift+Enter)">↑</button>
+        <button class="bottom-bar-btn" id="aesSearchNext" title="下一个 (Enter)">↓</button>
+        <button class="bottom-bar-btn" id="aesSearchClear" title="清空 (Esc)">×</button>
+        <div class="search-no-result" id="aesSearchNoResult">未找到匹配内容</div>
+      </div>
+    </div>
+
     <!-- Aesthetic Navigation (only visible in aesthetic mode) -->
     <div class="sidebar-section sidebar-aes-only" style="display:none;">
       <h4><span class="sidebar-label">🎬 视听章节</span></h4>
@@ -1164,22 +1244,6 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
         <a href="#aes-decompose" data-section="aes-decompose"><span class="nav-icon">📚</span><span class="lbl">拉片训练</span></a>
         <a href="#aes-channels" data-section="aes-channels"><span class="nav-icon">🎓</span><span class="lbl">2026 专业频道</span></a>
       </nav>
-    </div>
-
-    <!-- Search (aesthetic mode only) -->
-    <div class="sidebar-section sidebar-aes-only" style="display:none;">
-      <h4><span class="sidebar-label">🔍 搜索视听板块</span></h4>
-      <div class="sidebar-search-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="aesSearch" class="sidebar-search-full" placeholder="搜索景别 / 转场 / 音乐 / 拉片..." autocomplete="off">
-        <span class="sidebar-counter" id="aesSearchCounter">0</span>
-      </div>
-      <div class="sidebar-search-wrap" style="margin-top:6px; position:relative;">
-        <button class="bottom-bar-btn" id="aesSearchPrev" title="上一个 (Shift+Enter)">▲</button>
-        <button class="bottom-bar-btn" id="aesSearchNext" title="下一个 (Enter)">▼</button>
-        <button class="bottom-bar-btn" id="aesSearchClear" title="清空 (Esc)" style="margin-left:4px;">✕</button>
-        <div class="search-no-result" id="aesSearchNoResult">未找到匹配内容</div>
-      </div>
     </div>
 
     <!-- Stats -->
@@ -5108,7 +5172,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
     </div>
   </section>
 
-  <!-- 01 景别 & 构图 & 视角 & 镜头衔接 -->
+  <!-- 01 景别 & 构图视角 & 镜头衔接 -->
   <section id="aes-shot">
     <div class="container">
       <h2 class="section-title">01 · 景别 & 构图视角 & 镜头衔接</h2>
@@ -5134,6 +5198,24 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
           </div>
         </div>
 
+        <!-- 机位运动 -->
+        <div class="aes-card">
+          <h3>🎥 机位运动：推拉摇移跟</h3>
+          <p>推镜头放大情绪、拉镜头交代环境、摇镜头转移注意力、移镜头制造临场感、跟镜头锁定主体。每种运动都在改变观众与画面的关系。</p>
+          <div class="aes-image-wrap">
+            <img src="https://img.youtube.com/vi/IiyBo-qLDeM/hqdefault.jpg" alt="机位运动：推 拉 摇 移 跟 示意图" loading="lazy">
+          </div>
+        </div>
+
+        <!-- 镜头衔接 -->
+        <div class="aes-card">
+          <h3>🔗 镜头衔接：轴线与匹配</h3>
+          <p>视线匹配、动作匹配、越轴禁忌、跳切节奏、匹配剪辑。镜头与镜头之间的“缝合”决定叙事是否流畅。</p>
+          <div class="aes-image-wrap">
+            <img src="https://img.youtube.com/vi/TKXBAaQB03U/maxresdefault.jpg" alt="镜头衔接与轴线匹配示意" loading="lazy">
+          </div>
+        </div>
+
       </div>
 
       <h3 class="aes-subtitle">📺 教程资源 · 景别 & 运镜</h3>
@@ -5150,6 +5232,22 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
           <span class="res-platform">▶️ YouTube</span>
           <span class="res-title">分屏 · Split Screen 视觉叙事</span>
         </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=8wC7vBcTJEo" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">景别如何讲故事 · Every Frame a Painting</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=W1iZxWtp9bc" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">180度轴线规则 · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=GJ4zrhKjLyY" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">镜头构图的 5 个层次 · wolfcrow</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1yDKn6nELu" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">视听语言 · 景别/构图/轴线一次讲清</span>
+        </a>
       </div>
 
       <h3 class="aes-subtitle">🎥 画面构成 & 影视基础 & 前后技巧</h3>
@@ -5157,6 +5255,10 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
         <a class="res-link" href="https://www.youtube.com/watch?v=n1EKLvdUSac&t=107s" target="_blank" rel="noopener">
           <span class="res-platform">▶️ YouTube</span>
           <span class="res-title">Video Lighting Techniques — Nailing that Cinematic Look (with a Fill Light)</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1f4hw6nE8a" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">100 期拉片跟练 · 第一期：构图与机位</span>
         </a>
       </div>
     </div>
@@ -5169,7 +5271,31 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
       <p class="section-lead">色彩是情绪的底色，灯光是质感的来源。先选色温再选色相，先定光源再调对比。</p>
 
       <div class="aes-note">
-        <strong>🎨 配色比例口诀：</strong> 主色 60% + 辅色 30% + 点缀色 10%。 这是 1960 年代室内设计的遗产，至今仍是视觉最稳的公式。
+        <strong>🎨 配色比例口诀：</strong> 主色 60% + 辅色 30% + 点缀色 10%。这是 1960 年代室内设计的遗产，至今仍是视觉最稳的公式。
+      </div>
+
+      <div class="aes-grid">
+        <div class="aes-card">
+          <h3>🎨 色彩理论</h3>
+          <p>色轮、互补色、类比色、冷暖对比。电影配色不是随机选色，而是用色彩关系强化情绪。</p>
+          <div class="aes-image-wrap">
+            <img src="https://img.youtube.com/vi/lINVnA3rVIE/hqdefault.jpg" alt="电影色彩理论：互补色与冷暖对比" loading="lazy">
+          </div>
+        </div>
+        <div class="aes-card">
+          <h3>💡 三点布光</h3>
+          <p>主光（Key）、辅光（Fill）、轮廓光（Back/Rim）。控制光比，塑造立体感，是人像/产品/叙事画面的核心。</p>
+          <div class="aes-image-wrap">
+            <img src="https://img.youtube.com/vi/N9mPQBZe06s/hqdefault.jpg" alt="三点布光：主光 辅光 轮廓光" loading="lazy">
+          </div>
+        </div>
+        <div class="aes-card">
+          <h3>🌫️ 电影感布光氛围</h3>
+          <p>柔光、硬光、逆光、剪影、体积光。用光讲故事：同一主体，不同布光就是不同情绪。</p>
+          <div class="aes-image-wrap">
+            <img src="https://img.youtube.com/vi/r2nD_knsNrc/hqdefault.jpg" alt="电影感布光氛围示意" loading="lazy">
+          </div>
+        </div>
       </div>
 
       <h3 class="aes-subtitle">📺 教程资源 · 色彩 & 光效</h3>
@@ -5178,9 +5304,9 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
           <span class="res-platform">▶️ YouTube</span>
           <span class="res-title">色彩理论 · Color Theory in Film</span>
         </a>
-        <a class="res-link" href="https://www.youtube.com/results?search_query=Color+Theory+and+Wes+Anderson+Style+StudioBinder" target="_blank" rel="noopener">
+        <a class="res-link" href="https://www.youtube.com/watch?v=qE-03z7XU3U" target="_blank" rel="noopener">
           <span class="res-platform">▶️ YouTube</span>
-          <span class="res-title">Color Theory and Wes Anderson Style · StudioBinder</span>
+          <span class="res-title">色彩理论完全指南 · StudioBinder</span>
         </a>
         <a class="res-link" href="https://www.youtube.com/watch?v=7d-54gTAgkc&t=191s" target="_blank" rel="noopener">
           <span class="res-platform">▶️ YouTube</span>
@@ -5194,21 +5320,42 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
           <span class="res-platform">▶️ YouTube</span>
           <span class="res-title">三点布光 · Three-Point Lighting</span>
         </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=O6D1aXj2F2A" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Aputure 电影布光入门 · 硬光/柔光/逆光</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=4HRMv8d2f5o" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">罗杰·迪金斯灯光拆解 · Cinematography Database</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV17NtG6iEd1" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">视听语言 · 光线与色彩一次讲清</span>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- 03 转场 & 剪辑节奏 & 声音 -->
+  <!-- 03 转场 & 剪辑节奏 -->
   <section id="aes-transition">
     <div class="container">
-      <h2 class="section-title">03 · 转场 & 剪辑节奏 & 声音</h2>
-      <p class="section-lead">转场是时间的语法，剪辑是情绪的呼吸，声音是看不见的演员。</p>
+      <h2 class="section-title">03 · 转场 & 剪辑节奏</h2>
+      <p class="section-lead">转场是时间的语法，剪辑是情绪的呼吸。好的剪辑让观众感觉不到剪辑。</p>
 
-      <div class="aes-card">
-        <h3>🎬 6 种核心转场</h3>
-        <p>Fade（淡入淡出）· Dissolve（叠化）· Match Cut（匹配剪辑）· Iris（圈入圈出）· Wipe（划像）· Passing（遮挡转场）。</p>
-        <div class="aes-image-wrap">
-          <img src="assets/transitions-types.jpg" alt="6 种转场示意图 Fade Dissolve Match Cut Iris Wipe Passing" loading="lazy">
+      <div class="aes-grid">
+        <div class="aes-card">
+          <h3>🎬 6 种核心转场</h3>
+          <p>Fade（淡入淡出）· Dissolve（叠化）· Match Cut（匹配剪辑）· Iris（圈入圈出）· Wipe（划像）· Passing（遮挡转场）。</p>
+          <div class="aes-image-wrap">
+            <img src="assets/transitions-types.jpg" alt="6 种转场示意图 Fade Dissolve Match Cut Iris Wipe Passing" loading="lazy">
+          </div>
+        </div>
+        <div class="aes-card">
+          <h3>✂️ 剪辑节奏</h3>
+          <p>镜头时长决定呼吸：短切制造紧张，长镜头制造沉浸；节奏变化比恒定节奏更有情绪力量。</p>
+          <div class="aes-image-wrap">
+            <img src="https://img.youtube.com/vi/822eeaOBVII/hqdefault.jpg" alt="剪辑节奏：镜头时长与情绪曲线" loading="lazy">
+          </div>
         </div>
       </div>
 
@@ -5221,6 +5368,26 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
         <a class="res-link" href="https://www.youtube.com/watch?v=822eeaOBVII" target="_blank" rel="noopener">
           <span class="res-platform">▶️ YouTube</span>
           <span class="res-title">剪辑节奏 · Pacing & Rhythm in Editing</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=20g3AJgSJlg" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">匹配剪辑 · Match Cut 视觉魔法</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=2TB8pBw3ykk" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">剪辑中的节奏与张力 · This Guy Edits</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=1qM-Bz67MU8" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">电影剪辑六大原则 · Film Editing Pro</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=3FOzD4Sfgag" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">埃德加·赖特 · 视觉喜剧与剪辑节奏</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV19Pm1BPEMZ" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">适合所有人的拉片公式 · 剪辑节奏篇</span>
         </a>
       </div>
     </div>
@@ -5451,20 +5618,59 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
       </div>
 
       <h3 class="aes-subtitle">🎬 拉片 · 电影选择（经典 + 视觉系）</h3>
-      <div class="movie-list">
-        <div class="movie-item">🎞️ 《Wall·E》前段 — <span class="movie-tag">无对白叙事</span></div>
-        <div class="movie-item">🎞️ 《头号玩家》— <span class="movie-tag">视觉密度</span></div>
-        <div class="movie-item">🎞️ 《银翼杀手 2049》— <span class="movie-tag">霓虹美学</span></div>
-        <div class="movie-item">🎞️ 《火星救援》— <span class="movie-tag">孤独叙事</span></div>
-        <div class="movie-item">🎞️ 《怪奇物语》— <span class="movie-tag">复古与转场</span></div>
-        <div class="movie-item">🎞️ 《1917》— <span class="movie-tag">一镜到底</span></div>
-        <div class="movie-item">🎞️ 《极盗车神 Baby Driver》— <span class="movie-tag">声画同步</span></div>
-        <div class="movie-item">🎞️ 《爆裂鼓手 Whiplash》— <span class="movie-tag">节奏剪辑</span></div>
-        <div class="movie-item">🎞️ 《疯狂的麦克斯4：狂暴之路》— <span class="movie-tag">动作节奏</span></div>
-        <div class="movie-item">🎞️ 《花样年华》— <span class="movie-tag">框中框构图</span></div>
-        <div class="movie-item">🎞️ 《寄生虫》— <span class="movie-tag">建筑与调度</span></div>
-        <div class="movie-item">🎞️ 《布达佩斯大饭店》— <span class="movie-tag">对称构图</span></div>
-        <div class="movie-item">🎞️ 《Drive》— <span class="movie-tag">霓虹声画</span></div>
+      <div class="movie-grid">
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/UlnRzUhe_WE/hqdefault.jpg" alt="Wall·E 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>Wall·E</h4><span class="movie-tag">无对白叙事</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/KqVhbpBR8Lw/hqdefault.jpg" alt="头号玩家 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>头号玩家</h4><span class="movie-tag">视觉密度</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/aKcGnNg7pfc/hqdefault.jpg" alt="银翼杀手 2049 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>银翼杀手 2049</h4><span class="movie-tag">霓虹美学</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/K4DzNEUpffo/hqdefault.jpg" alt="火星救援 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>火星救援</h4><span class="movie-tag">孤独叙事</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/tOJmvOj15tw/hqdefault.jpg" alt="怪奇物语 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>怪奇物语</h4><span class="movie-tag">复古与转场</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/7uwjS7d4ntA/hqdefault.jpg" alt="1917 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>1917</h4><span class="movie-tag">一镜到底</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/LNGYsmTPWug/hqdefault.jpg" alt="极盗车神 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>极盗车神</h4><span class="movie-tag">声画同步</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/3qYB1qLx4R8/hqdefault.jpg" alt="爆裂鼓手 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>爆裂鼓手</h4><span class="movie-tag">节奏剪辑</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/YriUMCnIGUw/hqdefault.jpg" alt="疯狂的麦克斯4 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>疯狂的麦克斯4</h4><span class="movie-tag">动作节奏</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/01E5otZCpqw/hqdefault.jpg" alt="花样年华 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>花样年华</h4><span class="movie-tag">框中框构图</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/ZF6O93noHRc/hqdefault.jpg" alt="寄生虫 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>寄生虫</h4><span class="movie-tag">建筑与调度</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/q-XoLPmZZl4/hqdefault.jpg" alt="布达佩斯大饭店 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>布达佩斯大饭店</h4><span class="movie-tag">对称构图</span></div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-thumb"><img src="https://img.youtube.com/vi/eFU3FQh3xgE/hqdefault.jpg" alt="Drive 经典画面" loading="lazy"></div>
+          <div class="movie-info"><h4>Drive</h4><span class="movie-tag">霓虹声画</span></div>
+        </div>
       </div>
 
       <h3 class="aes-subtitle">🎥 每部电影 · 拉片视频（点击直接观看）</h3>
@@ -6527,7 +6733,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
 
   /* ---------- 7) 进入视口渐显（Reveal on scroll） ---------- */
   var SELECTOR = '.news-card,.term-card,.tool-card,.tip-card,.deprecated-card,' +
-                 '.channel-card,.decompose-card,.aes-card,.movie-item,.audio-cat,' +
+                 '.channel-card,.decompose-card,.aes-card,.movie-card,.audio-cat,' +
                  '.update-banner,.section-title,.section-lead,.section-desc,' +
                  '.landing-card,.table-wrap';
 
