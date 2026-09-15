@@ -991,23 +991,50 @@ body:hover .parallax-progress { box-shadow: 0 0 26px rgba(0, 229, 255, 0.95), 0 
 #parallaxBg {
   position: fixed; inset: 0; z-index: -1;
   pointer-events: none; overflow: hidden;
+  animation: bgHue 42s ease-in-out infinite;
+}
+@keyframes bgHue {
+  0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+  50%      { filter: hue-rotate(18deg) brightness(1.06); }
 }
 #parallaxBg .pb-orb {
   position: absolute; border-radius: 50%;
   filter: blur(78px); will-change: transform, opacity;
   mix-blend-mode: screen;
+  animation: pbBreathe 14s ease-in-out infinite;
 }
 #parallaxBg .pb-orb.a {
   width: 760px; height: 760px; top: -260px; left: 4%;
   background: radial-gradient(circle, rgba(61,169,255,0.22), transparent 68%);
+  animation-duration: 13s;
 }
 #parallaxBg .pb-orb.b {
   width: 640px; height: 640px; top: 28%; right: -200px;
   background: radial-gradient(circle, rgba(0,229,255,0.18), transparent 68%);
+  animation-duration: 17s;
+  animation-delay: -4s;
 }
 #parallaxBg .pb-orb.c {
   width: 560px; height: 560px; bottom: -240px; left: 28%;
   background: radial-gradient(circle, rgba(27,111,206,0.22), transparent 70%);
+  animation-duration: 15s;
+  animation-delay: -7s;
+}
+#parallaxBg .pb-orb.d {
+  width: 600px; height: 600px; top: 52%; left: -200px;
+  background: radial-gradient(circle, rgba(0,229,255,0.16), transparent 68%);
+  animation-duration: 19s;
+  animation-delay: -2s;
+}
+#parallaxBg .pb-orb.e {
+  width: 540px; height: 540px; top: 78%; right: -120px;
+  background: radial-gradient(circle, rgba(74,140,255,0.17), transparent 68%);
+  animation-duration: 16s;
+  animation-delay: -9s;
+}
+@keyframes pbBreathe {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
 }
 #parallaxBg .pb-grid {
   position: absolute; inset: -16% 0; will-change: transform;
@@ -6696,12 +6723,16 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
   bg.innerHTML = '<div class="pb-grid"></div>' +
                  '<div class="pb-orb a"></div>' +
                  '<div class="pb-orb b"></div>' +
-                 '<div class="pb-orb c"></div>';
+                 '<div class="pb-orb c"></div>' +
+                 '<div class="pb-orb d"></div>' +
+                 '<div class="pb-orb e"></div>';
   body.appendChild(bg);
   var pbGrid = bg.querySelector('.pb-grid');
   var orbA = bg.querySelector('.pb-orb.a');
   var orbB = bg.querySelector('.pb-orb.b');
   var orbC = bg.querySelector('.pb-orb.c');
+  var orbD = bg.querySelector('.pb-orb.d');
+  var orbE = bg.querySelector('.pb-orb.e');
 
   /* ---------- 3) Landing 滚动范围 ---------- */
   var landing = document.getElementById('landing-page');
@@ -6775,11 +6806,15 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
     root.style.setProperty('--sp', (isSubPage() ? p : 0).toFixed(4));
 
     if (isSubPage()) {
-      var pSub = p; // 0..1 子页滚动进度，用于光晕呼吸/缩放
-      if (pbGrid) pbGrid.style.transform = 'translate3d(0,' + (y * 0.085).toFixed(1) + 'px,0)';
-      if (orbA)   orbA.style.transform   = 'translate3d(' + (Math.sin(pSub * Math.PI * 2) * 24).toFixed(1) + 'px,' + (y * 0.22).toFixed(1) + 'px,0) scale(' + (1 + pSub * 0.06).toFixed(3) + ')';
-      if (orbB)   orbB.style.transform   = 'translate3d(' + (Math.cos(pSub * Math.PI * 2) * 22).toFixed(1) + 'px,' + (-y * 0.16).toFixed(1) + 'px,0) scale(' + (1 - pSub * 0.05).toFixed(3) + ')';
-      if (orbC)   orbC.style.transform   = 'translate3d(' + (Math.sin(pSub * Math.PI * 2 + 1) * 20).toFixed(1) + 'px,' + (y * 0.12).toFixed(1) + 'px,0) scale(' + (1 + pSub * 0.04).toFixed(3) + ')';
+      var pSub = p; // 0..1 子页滚动进度
+      // 长页面（tools 35000+px / aes 10000+px）下若 y 系数过大，光晕会被推离 viewport
+      // 解决：y 方向 = 小幅线性视差 + 正弦循环，振幅有限，5 个光晕不同相位错落
+      if (pbGrid) pbGrid.style.transform = 'translate3d(0,' + (y * 0.03 + Math.sin(y * 0.0011) * 8).toFixed(1) + 'px,0)';
+      if (orbA)   orbA.style.transform   = 'translate3d(' + (Math.sin(pSub * Math.PI * 2) * 30).toFixed(1) + 'px,' + (y * 0.008 + Math.sin(y * 0.0010) * 50).toFixed(1) + 'px,0) scale(' + (1 + Math.sin(pSub * Math.PI * 2) * 0.06).toFixed(3) + ')';
+      if (orbB)   orbB.style.transform   = 'translate3d(' + (Math.cos(pSub * Math.PI * 2) * 28).toFixed(1) + 'px,' + (-y * 0.008 + Math.cos(y * 0.0010 + 1) * 52).toFixed(1) + 'px,0) scale(' + (1 - Math.cos(pSub * Math.PI * 2) * 0.05).toFixed(3) + ')';
+      if (orbC)   orbC.style.transform   = 'translate3d(' + (Math.sin(pSub * Math.PI * 2 + 1) * 26).toFixed(1) + 'px,' + (y * 0.008 + Math.sin(y * 0.0010 + 2) * 48).toFixed(1) + 'px,0) scale(' + (1 + Math.cos(pSub * Math.PI * 2) * 0.04).toFixed(3) + ')';
+      if (orbD)   orbD.style.transform   = 'translate3d(' + (Math.cos(pSub * Math.PI * 2 + 1) * 32).toFixed(1) + 'px,' + (-y * 0.008 + Math.sin(y * 0.0010 + 3) * 50).toFixed(1) + 'px,0) scale(' + (1 + Math.sin(pSub * Math.PI * 2 + 1) * 0.06).toFixed(3) + ')';
+      if (orbE)   orbE.style.transform   = 'translate3d(' + (Math.sin(pSub * Math.PI * 2 + 2) * 28).toFixed(1) + 'px,' + (y * 0.008 + Math.cos(y * 0.0010 + 4) * 48).toFixed(1) + 'px,0) scale(' + (1 - Math.sin(pSub * Math.PI * 2 + 2) * 0.05).toFixed(3) + ')';
       shiftTitles();
     } else if (landing) {
       // Landing 视差：背景 < 网格 < 标题，三层不同速率，纯位移无淡出，柔和不抢戏
