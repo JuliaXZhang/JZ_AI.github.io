@@ -988,12 +988,13 @@ body.sidebar-open .sidebar-backdrop { display: block; }
 body:hover .parallax-progress { box-shadow: 0 0 26px rgba(0, 229, 255, 0.95), 0 0 7px rgba(61, 169, 255, 1); }
 
 /* ---------- 2) 视差背景层（工具 / 审美页可见） ---------- */
+/* 关键：absolute 定位 + body 全高，N 个光晕沿整个 body 高度均匀密集分布。
+   滚动时 #parallaxBg 作为 body 的子元素自然跟随向上移动，
+   视口看到的光晕就是页面"该段位置"的光晕，完美模拟滚动视差。 */
 #parallaxBg {
-  position: fixed; inset: 0; z-index: -1;
-  pointer-events: none; overflow: hidden;
+  position: absolute; top: 0; left: 0; right: 0; height: 100%;
+  z-index: -1; pointer-events: none; overflow: visible;
   animation: bgHue 42s ease-in-out infinite;
-  /* 整体跟随鼠标反向偏移，营造纵深感 */
-  transform: translate3d(calc(var(--bgmx, 0) * -16px), calc(var(--bgmy, 0) * -12px), 0);
   will-change: transform;
 }
 @keyframes bgHue {
@@ -1002,51 +1003,30 @@ body:hover .parallax-progress { box-shadow: 0 0 26px rgba(0, 229, 255, 0.95), 0 
 }
 #parallaxBg .pb-orb {
   position: absolute; border-radius: 50%;
-  filter: blur(78px); will-change: transform, opacity;
+  filter: blur(72px);
   mix-blend-mode: screen;
   animation: pbBreathe 14s ease-in-out infinite;
+  will-change: transform, opacity;
 }
-#parallaxBg .pb-orb.a {
-  width: 760px; height: 760px; top: -260px; left: 4%;
-  background: radial-gradient(circle, rgba(61,169,255,0.22), transparent 68%);
-  animation-duration: 13s;
-}
-#parallaxBg .pb-orb.b {
-  width: 640px; height: 640px; top: 28%; right: -200px;
-  background: radial-gradient(circle, rgba(0,229,255,0.18), transparent 68%);
-  animation-duration: 17s;
-  animation-delay: -4s;
-}
-#parallaxBg .pb-orb.c {
-  width: 560px; height: 560px; bottom: -240px; left: 28%;
-  background: radial-gradient(circle, rgba(27,111,206,0.22), transparent 70%);
-  animation-duration: 15s;
-  animation-delay: -7s;
-}
-#parallaxBg .pb-orb.d {
-  width: 600px; height: 600px; top: 52%; left: -200px;
-  background: radial-gradient(circle, rgba(0,229,255,0.16), transparent 68%);
-  animation-duration: 19s;
-  animation-delay: -2s;
-}
-#parallaxBg .pb-orb.e {
-  width: 540px; height: 540px; top: 78%; right: -120px;
-  background: radial-gradient(circle, rgba(74,140,255,0.17), transparent 68%);
-  animation-duration: 16s;
-  animation-delay: -9s;
-}
+/* 5 个基础 size 类（A 最大 / E 最小），JS 按 variant 顺序循环应用 */
+#parallaxBg .pb-orb.a { width: 200vh; height: 200vh; }
+#parallaxBg .pb-orb.b { width: 170vh; height: 170vh; }
+#parallaxBg .pb-orb.c { width: 180vh; height: 180vh; }
+#parallaxBg .pb-orb.d { width: 160vh; height: 160vh; }
+#parallaxBg .pb-orb.e { width: 150vh; height: 150vh; }
 @keyframes pbBreathe {
-  0%, 100% { opacity: 0.85; }
+  0%, 100% { opacity: 0.82; }
   50%      { opacity: 1; }
 }
+/* 网格层：固定到视口（作为底层纹理，不随滚动） */
 #parallaxBg .pb-grid {
-  position: absolute; inset: -16% 0; will-change: transform;
+  position: fixed; inset: 0; pointer-events: none; z-index: -1;
   background-image:
     linear-gradient(rgba(74,92,117,0.085) 1px, transparent 1px),
     linear-gradient(90deg, rgba(74,92,117,0.085) 1px, transparent 1px);
   background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(ellipse at 50% 18%, #000 0%, transparent 76%);
-  mask-image: radial-gradient(ellipse at 50% 18%, #000 0%, transparent 76%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(ellipse at 50% 50%, #000 0%, transparent 78%);
 }
 body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
 
@@ -6723,19 +6703,85 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
   /* ---------- 2) 视差背景层 ---------- */
   var bg = document.createElement('div');
   bg.id = 'parallaxBg';
-  bg.innerHTML = '<div class="pb-grid"></div>' +
-                 '<div class="pb-orb a"></div>' +
-                 '<div class="pb-orb b"></div>' +
-                 '<div class="pb-orb c"></div>' +
-                 '<div class="pb-orb d"></div>' +
-                 '<div class="pb-orb e"></div>';
+  bg.innerHTML = '<div class="pb-grid"></div>';
   body.appendChild(bg);
   var pbGrid = bg.querySelector('.pb-grid');
-  var orbA = bg.querySelector('.pb-orb.a');
-  var orbB = bg.querySelector('.pb-orb.b');
-  var orbC = bg.querySelector('.pb-orb.c');
-  var orbD = bg.querySelector('.pb-orb.d');
-  var orbE = bg.querySelector('.pb-orb.e');
+
+  /* 5 种光晕配色（沿用之前设计 + 加紫色变体增加差异） */
+  var ORB_VARIANTS = [
+    { cls: 'a', pos: 'left',   anchor: '30%', color: 'rgba(61,169,255,0.28)' },
+    { cls: 'b', pos: 'right',  anchor: '20%', color: 'rgba(0,229,255,0.24)' },
+    { cls: 'c', pos: 'left',   anchor: '60%', color: 'rgba(106,90,205,0.24)' },
+    { cls: 'd', pos: 'right',  anchor: '70%', color: 'rgba(20,184,166,0.24)' },
+    { cls: 'e', pos: 'left',   anchor: '45%', color: 'rgba(74,140,255,0.26)' }
+  ];
+
+  /* 关键：#parallaxBg 高度等于 body.scrollHeight，光晕沿整个 body 均匀密集分布。
+     滚动时 #parallaxBg 作为 body 的子元素自然跟随向上移动，
+     视口看到的光晕就是页面"该段位置"的光晕，完美模拟滚动视差。
+     注意：必须用 body.scrollHeight（不要 documentElement），
+     且不能让 orbs 撑大 bg 高度，避免 feedback loop。 */
+  function getBodyHeight() {
+    var sh = body.scrollHeight || 0;
+    if (sh < 100) sh = document.documentElement.scrollHeight || 0;
+    return sh;
+  }
+  function syncBgHeight() {
+    var h = getBodyHeight();
+    if (h > 0) {
+      bg.style.height = h + 'px';
+      layoutOrbs(h);
+    }
+  }
+
+  /* 根据 body 高度生成足够多的光晕，每 ~1.4 视口一个（高度 2 视口），确保任意滚动位置都有 2-3 个覆盖。
+     为避免 orbs 撑大 bg 高度：position 计算结果必须 <= bodyH（最后一个 orb 完整在 bg 内）。 */
+  function layoutOrbs(bodyH) {
+    var old = bg.querySelectorAll('.pb-orb');
+    for (var i = 0; i < old.length; i++) old[i].parentNode.removeChild(old[i]);
+    var vh = window.innerHeight || 900;
+    var orbH = Math.round(vh * 1.6);             // 光晕高 1.6 视口
+    var spacing = Math.round(vh * 1.0);          // 每 1.0 视口一个
+    var offset = Math.round(vh * 0.4);           // 第一个光晕从顶部 0.4 视口开始
+    // 计算 orb 数：(bodyH - offset) / spacing，向上取整
+    var count = Math.max(1, Math.ceil((bodyH - offset) / spacing) + 1);
+    // 限制最大 60 个，避免极大页面过度
+    if (count > 60) count = 60;
+    for (var i = 0; i < count; i++) {
+      var v = ORB_VARIANTS[i % ORB_VARIANTS.length];
+      var orb = document.createElement('div');
+      orb.className = 'pb-orb ' + v.cls;
+      // 关键：top 值从 offset 开始，每 spacing 一个，让 orbs 均匀分布在 body 内
+      orb.style.top = (offset + i * spacing - orbH * 0.4) + 'px';
+      // 横向位置：左 / 右 / 中 三种，按 variant.anchor 锚定
+      if (v.pos === 'left') {
+        orb.style.left = '-' + Math.round(vh * 0.4) + 'px';
+        orb.style.right = 'auto';
+      } else if (v.pos === 'right') {
+        orb.style.right = '-' + Math.round(vh * 0.4) + 'px';
+        orb.style.left = 'auto';
+      } else {
+        orb.style.left = v.anchor;
+        orb.style.right = 'auto';
+        orb.style.transform = 'translateX(-50%)';
+      }
+      orb.style.background = 'radial-gradient(circle at 50% 50%, ' + v.color + ', transparent 62%)';
+      // 给每个 orb 一个独立的 CSS 变量（用于 JS 做差异化微抖）
+      orb.style.setProperty('--oi', String(i));
+      bg.appendChild(orb);
+    }
+    orbs = bg.querySelectorAll('.pb-orb');
+  }
+
+  var orbs = [];
+
+  syncBgHeight();
+  if (window.ResizeObserver) {
+    new ResizeObserver(syncBgHeight).observe(body);
+  }
+  setTimeout(syncBgHeight, 200);
+  setTimeout(syncBgHeight, 1000);
+  setTimeout(syncBgHeight, 2500);
 
   /* ---------- 3) Landing 滚动范围 ---------- */
   var landing = document.getElementById('landing-page');
@@ -6750,16 +6796,28 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
   var px = 0, py = 0, tx = 0, ty = 0, looping = false;
   // 当前 y（render 和 mousemove 共享）
   var curY = 0;
-  // 光晕位置公式：累计 y 驱动持续动态 + 鼠标跟随
+  // 光晕横向偏移：鼠标跟随 + 极小累计正弦微抖（防止完全静止）
+  // 纵向不再用 JS translateY —— 光晕已沿 body 高度密集分布，滚动时自然上下移动
   function updateBgParallax() {
-    var y = curY;
     if (!isSubPage()) return;
-    if (pbGrid) pbGrid.style.transform = 'translate3d(' + (Math.sin(y * 0.0008) * 18 + px * 12).toFixed(1) + 'px,' + (y * 0.03 + Math.sin(y * 0.0011) * 8 + py * 7).toFixed(1) + 'px,0)';
-    if (orbA)   orbA.style.transform   = 'translate3d(' + (Math.sin(y * 0.0009 + 0) * 38 + px * 24).toFixed(1) + 'px,' + (y * 0.008 + Math.sin(y * 0.0010 + 0) * 50 + py * 16).toFixed(1) + 'px,0) scale(' + (1 + Math.sin(y * 0.0007) * 0.07).toFixed(3) + ')';
-    if (orbB)   orbB.style.transform   = 'translate3d(' + (Math.cos(y * 0.0009 + 1) * 34 + px * 20).toFixed(1) + 'px,' + (-y * 0.008 + Math.cos(y * 0.0010 + 1) * 52 + py * 14).toFixed(1) + 'px,0) scale(' + (1 - Math.cos(y * 0.0007) * 0.06).toFixed(3) + ')';
-    if (orbC)   orbC.style.transform   = 'translate3d(' + (Math.sin(y * 0.0009 + 2) * 32 + px * 22).toFixed(1) + 'px,' + (y * 0.008 + Math.sin(y * 0.0010 + 2) * 48 + py * 12).toFixed(1) + 'px,0) scale(' + (1 + Math.sin(y * 0.0007 + 1) * 0.05).toFixed(3) + ')';
-    if (orbD)   orbD.style.transform   = 'translate3d(' + (Math.cos(y * 0.0009 + 3) * 40 + px * 18).toFixed(1) + 'px,' + (-y * 0.008 + Math.sin(y * 0.0010 + 3) * 50 + py * 18).toFixed(1) + 'px,0) scale(' + (1 + Math.cos(y * 0.0007 + 2) * 0.06).toFixed(3) + ')';
-    if (orbE)   orbE.style.transform   = 'translate3d(' + (Math.sin(y * 0.0009 + 4) * 36 + px * 20).toFixed(1) + 'px,' + (y * 0.008 + Math.cos(y * 0.0010 + 4) * 48 + py * 14).toFixed(1) + 'px,0) scale(' + (1 - Math.sin(y * 0.0007 + 3) * 0.05).toFixed(3) + ')';
+    if (pbGrid) pbGrid.style.transform = 'translate3d(' + (px * 10).toFixed(1) + 'px,' + (py * 6).toFixed(1) + 'px,0)';
+    if (orbs && orbs.length) {
+      // 每个光晕的横向幅度随 class 略有差异（A 强 / D 弱），避免整齐移动
+      var ampMap = { a: 28, b: 22, c: 26, d: 20, e: 24 };
+      var phaseMap = { a: 0, b: 1, c: 2, d: 3, e: 4 };
+      for (var i = 0; i < orbs.length; i++) {
+        var el = orbs[i];
+        var cls = el.className;
+        var m = cls.match(/pb-orb ([a-e])/);
+        var k = m ? m[1] : 'a';
+        var amp = ampMap[k] || 24;
+        var phase = phaseMap[k] || 0;
+        var dx = px * amp + Math.sin(curY * 0.0008 + phase + i * 0.7) * 6;
+        var dy = py * 12;
+        var sc = 1 + Math.sin(curY * 0.0007 + phase + i * 0.5) * 0.035;
+        el.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0) scale(' + sc.toFixed(3) + ')';
+      }
+    }
   }
   function loop() {
     if (document.hidden) { looping = false; return; }
@@ -6769,8 +6827,6 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
       landing.style.setProperty('--mx', px.toFixed(3));
       landing.style.setProperty('--my', py.toFixed(3));
     }
-    bg.style.setProperty('--bgmx', px.toFixed(3));
-    bg.style.setProperty('--bgmy', py.toFixed(3));
     // 鼠标移动时也更新光晕（不依赖 scroll）
     updateBgParallax();
     if (Math.abs(tx - px) > 0.0015 || Math.abs(ty - py) > 0.0015) {
@@ -6893,15 +6949,18 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
         landing.style.setProperty('--mx', '0');
         landing.style.setProperty('--my', '0');
       }
-      bg.style.setProperty('--bgmx', '0');
-      bg.style.setProperty('--bgmy', '0');
       measureLanding();
+      syncBgHeight();
       render();
       shiftTitles();
+      // 内容稳定后再同步一次（侧栏搜索、卡片图片等异步）
+      setTimeout(syncBgHeight, 300);
+      setTimeout(syncBgHeight, 1200);
     }, 80);
   });
   window.addEventListener('resize', function() {
     measureLanding();
+    syncBgHeight();
     render();
   }, { passive: true });
   document.addEventListener('visibilitychange', function() {
