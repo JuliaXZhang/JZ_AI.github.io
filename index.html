@@ -325,6 +325,18 @@ body.page-aesthetic .sidebar-header .sidebar-brand { font-size: 0.85rem; }
 .audio-cat h4 { margin: 0 0 12px; color: var(--accent-pink); font-size: 1rem; }
 .audio-cat ul { margin: 0; padding-left: 18px; color: var(--text-dim); font-size: 0.86rem; line-height: 1.85; }
 .audio-cat ul li strong { color: var(--text); }
+.audio-cat a.av-link {
+  display: inline-block; margin: 3px 6px 0 0; padding: 2px 10px;
+  border: 1px solid rgba(61,169,255,0.30); border-radius: 10px;
+  background: rgba(61,169,255,0.08); color: var(--accent);
+  font-size: 0.76rem; text-decoration: none; white-space: nowrap;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.25s;
+}
+.audio-cat a.av-link:hover {
+  background: rgba(0,229,255,0.14); border-color: var(--accent-cyan); color: var(--accent-cyan);
+  transform: translateY(-1px);
+}
+.audio-cat .av-visual { display: block; margin-top: 2px; padding-left: 0; color: var(--text-muted); font-size: 0.78rem; }
 
 /* 拉片四角度 */
 .decompose-grid {
@@ -1152,6 +1164,22 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
         <a href="#aes-decompose" data-section="aes-decompose"><span class="nav-icon">📚</span><span class="lbl">拉片训练</span></a>
         <a href="#aes-channels" data-section="aes-channels"><span class="nav-icon">🎓</span><span class="lbl">2026 专业频道</span></a>
       </nav>
+    </div>
+
+    <!-- Search (aesthetic mode only) -->
+    <div class="sidebar-section sidebar-aes-only" style="display:none;">
+      <h4><span class="sidebar-label">🔍 搜索视听板块</span></h4>
+      <div class="sidebar-search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="aesSearch" class="sidebar-search-full" placeholder="搜索景别 / 转场 / 音乐 / 拉片..." autocomplete="off">
+        <span class="sidebar-counter" id="aesSearchCounter">0</span>
+      </div>
+      <div class="sidebar-search-wrap" style="margin-top:6px; position:relative;">
+        <button class="bottom-bar-btn" id="aesSearchPrev" title="上一个 (Shift+Enter)">▲</button>
+        <button class="bottom-bar-btn" id="aesSearchNext" title="下一个 (Enter)">▼</button>
+        <button class="bottom-bar-btn" id="aesSearchClear" title="清空 (Esc)" style="margin-left:4px;">✕</button>
+        <div class="search-no-result" id="aesSearchNoResult">未找到匹配内容</div>
+      </div>
     </div>
 
     <!-- Stats -->
@@ -5126,9 +5154,9 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
 
       <h3 class="aes-subtitle">🎥 画面构成 & 影视基础 & 前后技巧</h3>
       <div class="resource-grid">
-        <a class="res-link" href="https://www.youtube.com/results?search_query=Video+Lighting+Techniques+Cinematic+Fill+Light" target="_blank" rel="noopener">
+        <a class="res-link" href="https://www.youtube.com/watch?v=n1EKLvdUSac&t=107s" target="_blank" rel="noopener">
           <span class="res-platform">▶️ YouTube</span>
-          <span class="res-title">Video Lighting Techniques — Nailing the Cinematic Look (Fill Light)</span>
+          <span class="res-title">Video Lighting Techniques — Nailing that Cinematic Look (with a Fill Light)</span>
         </a>
       </div>
     </div>
@@ -5204,30 +5232,188 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
       <h2 class="section-title">04 · 音乐风格适配 & AudioEdit</h2>
       <p class="section-lead">音乐不只是背景，是叙事的第二支笔。同一段画面配上不同音乐，能讲完全不同的故事。</p>
 
-      <h3 class="aes-subtitle">🎵 广告类 · 音乐风格选择</h3>
+      <h3 class="aes-subtitle">🎧 音频剪辑节奏 & 方法</h3>
+      <div class="aes-note">
+        <strong>💡 先练节奏，再谈配乐：</strong>卡点不是"每拍切一刀"，而是<b>重音对动作、乐句对段落、留白对情绪</b>。先标记 BPM 与乐句（通常 4/8 拍一节），再决定哪里切、哪里故意不切——"不卡"的呼吸感比"全卡"更高级。
+      </div>
+      <div class="resource-grid">
+        <a class="res-link" href="https://beat2cut.com/zh/blog/beat-sync-video-editing-complete-guide/" target="_blank" rel="noopener">
+          <span class="res-platform">📖 学习网页</span>
+          <span class="res-title">Beat2Cut · 卡点剪辑完全指南（节拍同步方法论）</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=SpqCcZMd8dI" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Should You Edit Scenes to Music? · This Guy Edits</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=iqydkxhjN88" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">This Is How the Pros Edit · This Guy Edits</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=f7fHwLEtx3U" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Why Does an Edit Feel Right? · This Guy Edits</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=VKsc211xciI" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">7 Years of Film Editing Knowledge in 95 Minutes</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=jY6hT8-SR3g" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">How PRO Editors Change RHYTHM For EMOTION · Austen Menges</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=8FWsDeF3aU8" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Best Video Editing Rhythm Exercise · Austen Menges</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=rtTasuhY1qg" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">How to Edit Music in Trailers Like HBO · Story Slice</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=mXtnHHJFREM" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">The Science of Sound in Film · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=Gc4z7spf7VU" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Post Production Sound for Film · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=2vlwm4VyyTc" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Diegetic vs Non-Diegetic Sound 完全指南 · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=91IQJEzLHY4" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">What is a Leitmotif · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=P5S6VechlgY" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Auto-Sync Your Video to the Music Beat · Premiere Pro</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=amPhu2muP0w" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">How To Sync Audio & Video in Premiere Pro · Adobe</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1Qr4y1S7r1" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">声音设计 ① 用音效提升剪辑质感（混剪/预告片必备）</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV17D4y167tQ" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">新手也能学会的音效设计！一秒变大片</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1p3411e7Pk" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">剪辑如何剪出节奏？大片级控节奏技巧</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1msp4z8Ewj" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">剪辑中不可忽视的元素 — 音频音效的设计</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1eQ4y1A7We" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">Audition 音频剪辑速成教程</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1RE411c7c3" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">如何对音频进行简单剪辑</span>
+        </a>
+      </div>
+
+      <h3 class="aes-subtitle">🎵 广告类 · 音乐风格选择（含风格解析视频 & 适配画面）</h3>
       <div class="audio-cats">
         <div class="audio-cat">
-          <h4>🧸 玩具类</h4>
+          <h4>🧸 玩具类 · 可爱款</h4>
           <ul>
-            <li><strong>可爱款：</strong>Lo-Fi / 八位机 / 手风琴 / 木琴 / 短笛</li>
+            <li><strong>风格：</strong>Lo-Fi / 八位机 / 手风琴 / 木琴 / 短笛</li>
+            <li class="av-visual">🎬 适配画面：高饱和暖色调 / 圆角卡通形状 / 玩具微距特写 / 定格动画式跳切</li>
+            <li><strong>风格解析：</strong>
+              <br><a class="av-link" href="https://www.youtube.com/watch?v=8sU7mHJdT_g" target="_blank" rel="noopener">📺 The Art of Lofi Hip-Hop</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=lyN7aRqA6Cc" target="_blank" rel="noopener">📺 What Is Lofi?</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=GjDd6wmvZ2I" target="_blank" rel="noopener">📺 How Lofi Took Over YouTube</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=q_3d1x2VPxk" target="_blank" rel="noopener">📺 8-Bit 复古音频原理</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=hhjUnhxJUFQ" target="_blank" rel="noopener">📺 Chiptune 基础</a>
+            </li>
+          </ul>
+        </div>
+        <div class="audio-cat">
+          <h4>🧸 玩具类 · 轻奢/益智款</h4>
+          <ul>
             <li><strong>轻奢款：</strong>极简电子 / 钢琴 solo / 大提琴 + 弦乐</li>
             <li><strong>益智款：</strong>环境白噪音 + 钟琴 / 玻璃质感合成器</li>
-            <li><strong>运动款：</strong>Drum &amp; Bass / Dubstep / Hip-Hop Beat</li>
+            <li class="av-visual">🎬 适配画面：黑白灰低饱和 + 极简留白构图 / 微距材质质感 / 缓慢推轨 / 空镜自然光</li>
+            <li><strong>风格解析：</strong>
+              <br><a class="av-link" href="https://www.youtube.com/watch?v=55PILa-QKTY" target="_blank" rel="noopener">📺 What Is Minimalism in Music?</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=0Lpmk8tGiv4" target="_blank" rel="noopener">📺 Steve Reich 极简主义技法</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=jxN_7XmhXOw" target="_blank" rel="noopener">📺 What Is Ambient Music?</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=0V43qwMwb0Y" target="_blank" rel="noopener">📺 An Introduction to Ambient</a>
+            </li>
           </ul>
         </div>
         <div class="audio-cat">
-          <h4>🛒 快销类</h4>
+          <h4>🛹 玩具类 · 运动款</h4>
           <ul>
-            <li><strong>洗护类：</strong>水滴声 + 钢琴琶音 / 自然白噪音</li>
-            <li><strong>宠物类：</strong>Ukulele / 手风琴 + 轻快律动 / 动物采样</li>
+            <li><strong>风格：</strong>Drum &amp; Bass / Dubstep / Hip-Hop Beat</li>
+            <li class="av-visual">🎬 适配画面：重音卡点快切 / 第一人称运动镜头 / 故障风转场 / 速度骤停对比</li>
+            <li><strong>风格解析：</strong>
+              <br><a class="av-link" href="https://www.youtube.com/watch?v=G1pzmpJbjeE" target="_blank" rel="noopener">📺 From Jungle to Jump-Up（DnB）</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=TMtAnsKgC88" target="_blank" rel="noopener">📺 DnB 简史</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=qxhErf-cdKE" target="_blank" rel="noopener">📺 WTF Is Dubstep?</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=6Vscz-ln-do" target="_blank" rel="noopener">📺 Dubstep/House/Techno 流派分辨</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=ub8t6DzjoiQ" target="_blank" rel="noopener">📺 The Origins of Hip-Hop</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=syFkEfk-_cY" target="_blank" rel="noopener">📺 Every Rap Era in 31 Min</a>
+            </li>
           </ul>
         </div>
         <div class="audio-cat">
-          <h4>📖 情节类</h4>
+          <h4>🛒 快销类 · 洗护</h4>
+          <ul>
+            <li><strong>风格：</strong>水滴声 + 钢琴琶音 / 自然白噪音</li>
+            <li class="av-visual">🎬 适配画面：水花高速摄影 / 纯色背景产品特写 / 丝质慢动作 / 清透冷调</li>
+            <li><strong>风格解析：</strong>
+              <br><a class="av-link" href="https://www.youtube.com/watch?v=jxN_7XmhXOw" target="_blank" rel="noopener">📺 What Is Ambient Music?</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=I84_pIsv_iw" target="_blank" rel="noopener">📺 A Brief Guide to Ambient</a>
+            </li>
+          </ul>
+        </div>
+        <div class="audio-cat">
+          <h4>🐾 快销类 · 宠物</h4>
+          <ul>
+            <li><strong>风格：</strong>Ukulele / 手风琴 + 轻快律动 / 动物采样</li>
+            <li class="av-visual">🎬 适配画面：日系暖调 / 手持跟拍 / 低角度宠物视角 / 慢动作奔跑</li>
+            <li><strong>风格解析：</strong>
+              <br><a class="av-link" href="https://www.youtube.com/watch?v=RjC6uLJPVIQ" target="_blank" rel="noopener">📺 7 Beautiful Genres on Ukulele</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=Jvu5VZVe3MI" target="_blank" rel="noopener">📺 Ukulele 音乐理论</a>
+            </li>
+          </ul>
+        </div>
+        <div class="audio-cat">
+          <h4>📖 情节类 · 情绪配乐</h4>
           <ul>
             <li>情绪音乐：先定情绪关键词（孤独/温暖/悬疑）→ 选 BPM → 选乐器</li>
             <li>参考工具：Epidemic Sound / Artlist / Musicbed</li>
             <li>声音设计：Foley + Ambience + Score 三层叠加</li>
+            <li class="av-visual">🎬 适配画面：情绪蒙太奇 / 色彩心理学调度 / 光线叙事 / 主导动机跟随主角</li>
+            <li><strong>风格解析：</strong>
+              <br><a class="av-link" href="https://www.youtube.com/watch?v=91IQJEzLHY4" target="_blank" rel="noopener">📺 What is a Leitmotif?</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=bR2EobBG9wQ" target="_blank" rel="noopener">📺 Understanding the Leitmotif</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=2DT5WmvtB8w" target="_blank" rel="noopener">📺 What is Film Scoring?</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=7J8KrZjs6uk" target="_blank" rel="noopener">📺 Film Scoring: What The Pros Know</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=fjzjGhN56Ok" target="_blank" rel="noopener">📺 Orchestration Basics</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=ZX62ADNX8ss" target="_blank" rel="noopener">📺 Orchestral 入门指南</a>
+            </li>
+          </ul>
+        </div>
+        <div class="audio-cat">
+          <h4>🌆 霓虹科技类</h4>
+          <ul>
+            <li><strong>风格：</strong>Synthwave / Retrowave / Outrun / 玻璃质感电子</li>
+            <li class="av-visual">🎬 适配画面：霓虹紫粉蓝 / 雨夜反光地面 / 隧道灯光拖影 / 复古 CRT 扫描线</li>
+            <li><strong>风格解析：</strong>
+              <br><a class="av-link" href="https://www.youtube.com/watch?v=w7W_vpTsb-0" target="_blank" rel="noopener">📺 What Is Synthwave?</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=SxLmXEjOgsY" target="_blank" rel="noopener">📺 Synthwave/Vaporwave/Outrun 区别</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=LD9858dpypE" target="_blank" rel="noopener">📺 Synthwave Explained</a>
+              <a class="av-link" href="https://www.youtube.com/watch?v=oVs5cQiZTig" target="_blank" rel="noopener">📺 Drive 中的怀旧摄影</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -5268,9 +5454,359 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
       <div class="movie-list">
         <div class="movie-item">🎞️ 《Wall·E》前段 — <span class="movie-tag">无对白叙事</span></div>
         <div class="movie-item">🎞️ 《头号玩家》— <span class="movie-tag">视觉密度</span></div>
-        <div class="movie-item">🎞️ 《赛博朋克 2077》— <span class="movie-tag">霓虹美学</span></div>
+        <div class="movie-item">🎞️ 《银翼杀手 2049》— <span class="movie-tag">霓虹美学</span></div>
         <div class="movie-item">🎞️ 《火星救援》— <span class="movie-tag">孤独叙事</span></div>
         <div class="movie-item">🎞️ 《怪奇物语》— <span class="movie-tag">复古与转场</span></div>
+        <div class="movie-item">🎞️ 《1917》— <span class="movie-tag">一镜到底</span></div>
+        <div class="movie-item">🎞️ 《极盗车神 Baby Driver》— <span class="movie-tag">声画同步</span></div>
+        <div class="movie-item">🎞️ 《爆裂鼓手 Whiplash》— <span class="movie-tag">节奏剪辑</span></div>
+        <div class="movie-item">🎞️ 《疯狂的麦克斯4：狂暴之路》— <span class="movie-tag">动作节奏</span></div>
+        <div class="movie-item">🎞️ 《花样年华》— <span class="movie-tag">框中框构图</span></div>
+        <div class="movie-item">🎞️ 《寄生虫》— <span class="movie-tag">建筑与调度</span></div>
+        <div class="movie-item">🎞️ 《布达佩斯大饭店》— <span class="movie-tag">对称构图</span></div>
+        <div class="movie-item">🎞️ 《Drive》— <span class="movie-tag">霓虹声画</span></div>
+      </div>
+
+      <h3 class="aes-subtitle">🎥 每部电影 · 拉片视频（点击直接观看）</h3>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《Wall·E》— 无对白叙事</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=UlnRzUhe_WE" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Pixar 叙事 — WALL-E 开场如何无对白讲故事 · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=5ZhtvS0ofto" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Everything GREAT About WALL-E · CinemaWins</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=Z1-vPQKwXbY" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Wall-E 作为社会学叙事 · Pop Culture Detective</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《头号玩家》— 视觉密度</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=KqVhbpBR8Lw" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Behind the Magic — ILM 视觉特效拆解</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=TRxRARH6QZE" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">单场戏精读 · Single Scene Analysis · PastaInc</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=wJvqtny-lE4" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Behind the VFX · BBC Click</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《银翼杀手 2049》— 霓虹美学</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=aKcGnNg7pfc" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">摄影风格全解析 · Crimson Engine</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=WoUHnivDZLw" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Roger Deakins 如何掌镜 · Angus Davies</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=a3ReIy0kiGM" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">构图解析 · Masters of Cinematography</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=lF5lmYgoYEM" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">摄影技法逐段拆解 · wolfcrow</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=8ZEM0WcBPIk" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">构图技巧实战分析 · IPOX studios</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=Tcg98AAcprc" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">银翼杀手 vs 2049 摄影对比 · Thomas Flight</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《火星救援》— 孤独叙事</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=K4DzNEUpffo" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">雷德利·斯科特最佳作品论 · Film Obsessed</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=FaHa4IhIGn8" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">摄影师 Dariusz Wolski 摄影解析</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=FI0YfcUdNBw" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">视觉特效 Artisans 特辑 · Variety</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《怪奇物语》— 复古与转场</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=tOJmvOj15tw" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">摄影全拆解 — 复古打光/镜头选择 · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=CMEIVc94I54" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">试播集机位运动为什么有效 · Dolly Into Meaning</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=yW7lyukUwfU" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">The Cinematography of Stranger Things · Netflix</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《1917》— 一镜到底</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=7uwjS7d4ntA" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">一镜到底拆解 — Deakins 谈镜头/长镜头 · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=SWiabFGeTxw" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">1917 如何"用摄影机剪辑" · Thomas Flight</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=lTfI_d5SovE" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">1917 为何要做一镜到底 · The Take</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=ypvd2LJCJHg" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">一镜到底幕后加长特辑 · IMDb</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=Pw1qT1e7sDY" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">One Shot One Film 色彩复盘 · Barrett Kaufman</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《极盗车神 Baby Driver》— 声画同步</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=LNGYsmTPWug" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">开场戏如何铺垫 · Thomas Flight</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=LD-dJv2QkzA" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">切分音声音设计 — 声音设计师专访 · CinemaBlend</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=uRmShuvY_Xo" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">奥斯卡提名声音剪辑解析 · CNET</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=xgJYh6rhtYE" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Julian Slater 谈声音创作 · BAFTA</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=ipx0iZWICBE" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">第一场戏的天才设计 · The Title Review</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《爆裂鼓手 Whiplash》— 节奏剪辑</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=3qYB1qLx4R8" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Whiplash 神级剪辑拆解 · This Guy Edits</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=EKju6NvIKa0" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">剪辑深度分析 · emotiondesigner</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=rRyDOAKK_Aw" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">为什么 Whiplash 的剪辑是完美的 · Independent Film Editor</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=xLOV5qR-Bp4" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">为何全片只用两种颜色？ · Movie LUTs</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=R_W99pY0KyU" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Whiplash 的视觉音乐 · Skye Blue</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《疯狂的麦克斯4：狂暴之路》— 动作节奏</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=YriUMCnIGUw" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">追车戏拍摄方法 · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=WSQYvHIvjB4" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">动作大师课 — 混乱的节奏 · Rossatron</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=CR7ejkmf8Y4" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Mad Max 中心构图法 · Vashi Nedomansky</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=VITjAkrzzzc" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">中心构图 vs 混乱剪辑 · This Guy Edits</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《花样年华》— 框中框构图</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=01E5otZCpqw" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Frames Within Frames 框中框 · Nerdwriter1</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=cfEeirNQnEM" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">浪漫主义摄影解析 · Angus Davies</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=98QmnyyIXsY" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Crash Course 影评课 · CrashCourse</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《寄生虫》— 建筑与调度</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=ZF6O93noHRc" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">寄生虫的摄影有多绝 · Thomas Flight</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=VQ9aElC-mUk" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">现代经典的摄影 · In Depth Cine</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=AvO8-925Edc" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">视觉建筑学 · Thomas Flight</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《布达佩斯大饭店》— 对称构图</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=q-XoLPmZZl4" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">对称与剪辑的平衡术 · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=q45m7RYy7-4" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">韦斯·安德森风格完全指南 · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=ba3c9KEuQ4A" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">为什么韦斯电影长那样？ · Thomas Flight</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=mLvtxIT66M0" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">布达佩斯大饭店构图分析 · Hyden</span>
+        </a>
+      </div>
+
+      <h4 style="margin:22px 0 10px; color:var(--text);">🎞️《Drive》— 霓虹声画</h4>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=eFU3FQh3xgE" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">开场戏声音设计与悬念 · StudioBinder</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=oVs5cQiZTig" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Drive 的怀旧摄影 · You Have Been Watching Films</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=0DbHDb4I_P0" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">Drive 电影制作大师课 · The Absent Artist</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=MiUejBxRu0Y" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">摄影师谈 Drive 的制作 · Cooke Optics</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=h5jESZGShLU" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">A Real Motor_theme 深度解析 · A Matter of Film</span>
+        </a>
+      </div>
+
+      <h3 class="aes-subtitle">🎓 导演风格研究（拉片进阶）</h3>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.youtube.com/watch?v=doaQC-S8de8" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">黑泽明 — 运动构图 · Every Frame a Painting</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=jGc-K7giqKM" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">一场戏的几何学 · Every Frame a Painting</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=QPAloq5MCUA" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">大卫·芬奇 — 另一种方式是错的 · Every Frame a Painting</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=3FOzD4Sfgag" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">埃德加·赖特 — 视觉喜剧怎么做 · Every Frame a Painting</span>
+        </a>
+        <a class="res-link" href="https://www.youtube.com/watch?v=eLwLR_XoMi4" target="_blank" rel="noopener">
+          <span class="res-platform">▶️ YouTube</span>
+          <span class="res-title">韦斯·安德森风格隐藏要素 · StudioBinder</span>
+        </a>
+      </div>
+
+      <h3 class="aes-subtitle">📺 B站 · 中文电影逐段拉片系列</h3>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.bilibili.com/video/BV1rmtz6DEpf" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">《百鸟朝凤》拉片解析（上）</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1CbYr6gEvp" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">《百鸟朝凤》拉片解析（中）</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1rDMQ6BEdN" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">《阿Q正传》拉片解析（上）</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1s6uY64EnG" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">《阿Q正传》拉片解析（中）</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1WmhN6eETk" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">《阿Q正传》拉片解析（下）</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1ApKV64EwM" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">《牧马人》拉片解析（上）</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1AXgo68EXm" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">《牧马人》拉片解析（中）</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1P43t6UEd9" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">《牧马人》拉片解析（下）</span>
+        </a>
+      </div>
+
+      <h3 class="aes-subtitle">📚 拉片方法论（先看这些再拉片）</h3>
+      <div class="resource-grid">
+        <a class="res-link" href="https://www.bilibili.com/video/BV17NtG6iEd1" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">从零看懂视听语言合集 · 景别运镜光线色彩一次讲清</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1yDKn6nELu" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">最适合新手学习的拉片干货教学</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV19Pm1BPEMZ" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">适合所有人的拉片公式</span>
+        </a>
+        <a class="res-link" href="https://www.bilibili.com/video/BV1f4hw6nE8a" target="_blank" rel="noopener">
+          <span class="res-platform">📺 B站</span>
+          <span class="res-title">100 期拉片跟练 · 第一期</span>
+        </a>
       </div>
 
       <h3 class="aes-subtitle">📺 拉片 · 广告短片</h3>
@@ -5382,16 +5918,6 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
           </div>
         </a>
 
-      </div>
-
-      <div class="aes-note" style="margin-top:36px;">
-        <strong>💡 学习方法论：</strong>
-        <ol style="margin:10px 0 0; padding-left:24px; line-height:1.9;">
-          <li>每周精看 1 部经典电影（关弹幕、纯看）→ 写镜头笔记</li>
-          <li>每周跟练 1 个 YouTube 教程 → 模仿重做</li>
-          <li>每月拉 1 部片（拆 5-10 个核心镜头）→ 输出文字版</li>
-          <li>每季度对标 1 条商业广告 → 用 AI 复刻其中一段</li>
-        </ol>
       </div>
     </div>
   </section>
@@ -5548,7 +6074,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
     '.sidebar', '.bottom-bar', '.sidebar-toggle-mobile', '.sidebar-backdrop',
     '.sidebar-search-wrap', '.sidebar-search-full', '.sidebar-counter', '.search-icon',
     '.bottom-bar-btn', '.bottom-bar-content', '.term-mini',
-    '.search-no-result', 'script', 'style'
+    '.search-no-result', 'script', 'style', '#page-aesthetic'
   ];
 
   function isExcluded(el) {
@@ -5597,6 +6123,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
         parent.normalize();
       }
     }
+    textNodesCache = null; // 拆分/归并过节点后旧缓存失效，必须重建
     allHits = [];
     currentIdx = -1;
   }
@@ -5732,6 +6259,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
 
   document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      if (document.body.classList.contains('page-aesthetic')) return; // 视听页交给 aesSearch 的 Ctrl+K
       e.preventDefault();
       if (input) { input.focus(); input.select(); }
     }
@@ -5999,7 +6527,7 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
 
   /* ---------- 7) 进入视口渐显（Reveal on scroll） ---------- */
   var SELECTOR = '.news-card,.term-card,.tool-card,.tip-card,.deprecated-card,' +
-                 '.channel-card,.decompose-card,.aes-card,.movie-item,' +
+                 '.channel-card,.decompose-card,.aes-card,.movie-item,.audio-cat,' +
                  '.update-banner,.section-title,.section-lead,.section-desc,' +
                  '.landing-card,.table-wrap';
 
@@ -6061,6 +6589,202 @@ body:not(.page-tools):not(.page-aesthetic) #parallaxBg { display: none; }
   });
 
   render();
+})();
+
+/* ===== Aesthetic Search: 视听提升板块侧栏搜索（独立模块，仅作用于 #page-aesthetic） ===== */
+(function() {
+  'use strict';
+  var input = document.getElementById('aesSearch');
+  var root = document.getElementById('page-aesthetic');
+  if (!input || !root) return;
+
+  var counter = document.getElementById('aesSearchCounter');
+  var prevBtn = document.getElementById('aesSearchPrev');
+  var nextBtn = document.getElementById('aesSearchNext');
+  var clearBtn = document.getElementById('aesSearchClear');
+  var noResult = document.getElementById('aesSearchNoResult');
+
+  var allHits = [];
+  var currentIdx = -1;
+  var debounceTimer = null;
+  var textNodesCache = null;
+
+  function collectTextNodes() {
+    if (textNodesCache) return textNodesCache;
+    var nodes = [];
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(node) {
+        if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        var parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        var tag = parent.tagName;
+        if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT') return NodeFilter.FILTER_REJECT;
+        if (parent.closest('.search-no-result')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var node;
+    while ((node = walker.nextNode())) nodes.push(node);
+    textNodesCache = nodes;
+    return nodes;
+  }
+
+  function clearHighlights() {
+    var marks = root.querySelectorAll('mark.search-hit, mark.search-hit-current');
+    for (var i = 0; i < marks.length; i++) {
+      var mark = marks[i];
+      var parent = mark.parentNode;
+      if (parent) {
+        parent.replaceChild(document.createTextNode(mark.textContent), mark);
+        parent.normalize();
+      }
+    }
+    textNodesCache = null;
+    allHits = [];
+    currentIdx = -1;
+  }
+
+  function doSearch(query) {
+    clearHighlights();
+    if (!query || query.length < 1) {
+      if (counter) counter.style.display = 'none';
+      if (noResult) noResult.style.display = 'none';
+      if (clearBtn) clearBtn.style.display = 'none';
+      return;
+    }
+
+    if (clearBtn) clearBtn.style.display = 'block';
+
+    var nodes = collectTextNodes();
+    var lowerQuery = query.toLowerCase();
+    var hits = [];
+
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      var text = node.nodeValue;
+      var lowerText = text.toLowerCase();
+      var idx = 0;
+      var segments = [];
+      var lastEnd = 0;
+
+      while ((idx = lowerText.indexOf(lowerQuery, lastEnd)) !== -1) {
+        segments.push({ start: idx, end: idx + query.length });
+        lastEnd = idx + query.length;
+      }
+
+      if (segments.length > 0) {
+        var parent = node.parentNode;
+        var fragment = document.createDocumentFragment();
+        var cursor = 0;
+        for (var j = 0; j < segments.length; j++) {
+          var seg = segments[j];
+          if (seg.start > cursor) {
+            fragment.appendChild(document.createTextNode(text.substring(cursor, seg.start)));
+          }
+          var mark = document.createElement('mark');
+          mark.className = 'search-hit';
+          mark.textContent = text.substring(seg.start, seg.end);
+          fragment.appendChild(mark);
+          cursor = seg.end;
+        }
+        if (cursor < text.length) {
+          fragment.appendChild(document.createTextNode(text.substring(cursor)));
+        }
+        parent.replaceChild(fragment, node);
+        var newMarks = parent.querySelectorAll('mark.search-hit');
+        for (var k = 0; k < newMarks.length; k++) {
+          hits.push(newMarks[k]);
+        }
+      }
+    }
+
+    allHits = hits;
+    if (counter) {
+      counter.textContent = hits.length;
+      counter.style.display = hits.length > 0 ? 'block' : 'none';
+    }
+
+    if (hits.length > 0) {
+      if (noResult) noResult.style.display = 'none';
+      currentIdx = 0;
+      highlightCurrent();
+      scrollToCurrent();
+    } else {
+      if (noResult) noResult.style.display = 'block';
+    }
+  }
+
+  function highlightCurrent() {
+    for (var i = 0; i < allHits.length; i++) {
+      allHits[i].className = i === currentIdx ? 'search-hit-current' : 'search-hit';
+    }
+    if (counter) counter.textContent = (currentIdx + 1) + ' / ' + allHits.length;
+  }
+
+  function scrollToCurrent() {
+    if (currentIdx < 0 || currentIdx >= allHits.length) return;
+    var el = allHits[currentIdx];
+    if (!el) return;
+    var rect = el.getBoundingClientRect();
+    var top = rect.top + window.pageYOffset - 80;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+  }
+
+  function goNext() {
+    if (allHits.length === 0) return;
+    currentIdx = (currentIdx + 1) % allHits.length;
+    highlightCurrent();
+    scrollToCurrent();
+  }
+
+  function goPrev() {
+    if (allHits.length === 0) return;
+    currentIdx = (currentIdx - 1 + allHits.length) % allHits.length;
+    highlightCurrent();
+    scrollToCurrent();
+  }
+
+  input.addEventListener('input', function() {
+    var q = input.value.trim();
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function() { doSearch(q); }, 180);
+  });
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (e.shiftKey) goPrev(); else goNext();
+    } else if (e.key === 'Escape') {
+      input.value = '';
+      doSearch('');
+      input.blur();
+    }
+  });
+
+  if (clearBtn) clearBtn.addEventListener('click', function() {
+    input.value = '';
+    doSearch('');
+    input.focus();
+  });
+  if (nextBtn) nextBtn.addEventListener('click', goNext);
+  if (prevBtn) prevBtn.addEventListener('click', goPrev);
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      if (!document.body.classList.contains('page-aesthetic')) return;
+      e.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+
+  // 路由切走视听页时自动清空搜索，避免残留高亮
+  window.addEventListener('hashchange', function() {
+    if (!document.body.classList.contains('page-aesthetic') && input.value) {
+      input.value = '';
+      doSearch('');
+    }
+  });
 })();
 </script>
 
